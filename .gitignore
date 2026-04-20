@@ -16,5 +16,7 @@ cloudflared/*.exe
 media/
 logs/
 staticfiles/
+staticfiles_build/
+.vercel/
 _tmp_*.html
 Thumbs.db

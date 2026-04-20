@@ -91,6 +91,13 @@ if RENDER_EXTERNAL_HOSTNAME:
     render_origin = f'https://{RENDER_EXTERNAL_HOSTNAME}'
     if render_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(render_origin)
+VERCEL_URL = env_str('VERCEL_URL', default='').strip()
+if VERCEL_URL:
+    if VERCEL_URL not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(VERCEL_URL)
+    vercel_origin = f'https://{VERCEL_URL}'
+    if vercel_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(vercel_origin)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = env_bool('USE_X_FORWARDED_HOST', default=True)
 SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', default=False)
@@ -233,9 +240,9 @@ else:
 # ==============================================================================
 
 # Configuração para o Django Cloudinary Storage
-cloudinary_cloud_name = config('CLOUDINARY_STORAGE_CLOUD_NAME', default='dcell4t8w')
-cloudinary_api_key = config('CLOUDINARY_STORAGE_API_KEY', default='139941422393582')
-cloudinary_api_secret = config('CLOUDINARY_STORAGE_API_SECRET', default='jAkzHkK4dYL_JfUorreTYgfxBBk')
+cloudinary_cloud_name = env_str('CLOUDINARY_STORAGE_CLOUD_NAME', default='').strip()
+cloudinary_api_key = env_str('CLOUDINARY_STORAGE_API_KEY', default='').strip()
+cloudinary_api_secret = env_str('CLOUDINARY_STORAGE_API_SECRET', default='').strip()
 
 CLOUDINARY_STORAGE = {
         'CLOUD_NAME': cloudinary_cloud_name,
@@ -243,16 +250,17 @@ CLOUDINARY_STORAGE = {
         'API_SECRET': cloudinary_api_secret,
 }
 
-# Inicialização Forçada da Biblioteca
-cloudinary.config( 
-    cloud_name = cloudinary_cloud_name,
-    api_key = cloudinary_api_key,
-    api_secret = cloudinary_api_secret,
-  secure = True
-)
+# Inicialização da biblioteca apenas quando as credenciais existem.
+if cloudinary_cloud_name and cloudinary_api_key and cloudinary_api_secret:
+    cloudinary.config(
+        cloud_name=cloudinary_cloud_name,
+        api_key=cloudinary_api_key,
+        api_secret=cloudinary_api_secret,
+        secure=True,
+    )
 
-# Define armazenamento padrão
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Define armazenamento padrão
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -37,3 +37,28 @@ Use `python manage.py test crm.tests_lead_create` para rodar a suite focada atua
 ## Publicacao
 
 O projeto esta preparado para subir em um repositorio GitHub separado deste diretorio. O arquivo `.env` continua ignorado e nao deve ser versionado.
+
+## Deploy estilo Vercel
+
+O repositorio agora inclui arquivos para deploy serverless:
+
+- `vercel.json`
+- `build_files.sh`
+- `.env.vercel.example`
+
+Pontos importantes para esse tipo de deploy:
+
+- nao use SQLite em producao
+- configure `DATABASE_URL` para Postgres ou outro banco gerenciado
+- configure `SECRET_KEY`, `ALLOWED_HOSTS` e `CSRF_TRUSTED_ORIGINS`
+- se usar upload de arquivos, configure Cloudinary
+- o host dinamico de preview da Vercel pode ser aceito via `VERCEL_URL`
+
+Fluxo sugerido:
+
+1. copie `.env.vercel.example` como base para as variaveis do projeto na plataforma
+2. conecte o repositorio no provedor
+3. use `python manage.py migrate` em um passo de post-deploy ou migration job
+4. publique a branch `main`
+
+Para validar localmente antes do deploy, rode `python manage.py check` e `python manage.py collectstatic --noinput`.
