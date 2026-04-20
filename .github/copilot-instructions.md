@@ -8,8 +8,8 @@ This file gives targeted, actionable guidance for AI coding agents working in th
 - **Key services:** external catalog integration at [crm/integrations/edeltec.py](crm/integrations/edeltec.py#L1-L40); business engines under `services/` and `crm/services/` (example: [crm/services/kpi_engine.py](crm/services/kpi_engine.py#L1-L40)).
 
 2) Important configuration & conventions
-- **Settings:** main config is [core/settings.py](core/settings.py#L1-L80). Note: `cloudinary_storage` must be listed before admin/static apps (project relies on that ordering).
-- **Storage & media:** Cloudinary is configured in `core/settings.py` (CLOUDINARY_STORAGE + `DEFAULT_FILE_STORAGE`) — credentials are present in the file; prefer environment variables via `python-decouple` in future changes.
+- **Settings:** main config is [core/settings.py](core/settings.py#L1-L80).
+- **Storage & media:** Cloudinary is configured from environment variables in `core/settings.py`; keep credentials out of committed files.
 - **Database:** uses `dj_database_url` and expects `DATABASE_URL` / Neon defaults in `core/settings.py`.
 - **Static files:** `whitenoise.storage.CompressedManifestStaticFilesStorage` is used; run `collectstatic` before deployments.
 - **PWA:** service worker is at `static/js/serviceworker.js` and configured in settings (`PWA_SERVICE_WORKER_PATH`).
@@ -27,7 +27,7 @@ This file gives targeted, actionable guidance for AI coding agents working in th
 - **Templates & static:** Templates use app-level organization `crm/templates/crm/*.html`. Static assets live in `static/` and are referenced as usual via `{% static %}`.
 
 5) Safety, secrets, and missing artifacts
-- The repository contains hard-coded Cloudinary and DB connection strings in `core/settings.py`. Treat these as secrets: avoid echoing them in commits or logs. When modifying settings prefer `python-decouple` environment variables.
+- Runtime secrets must stay in environment variables (`SECRET_KEY`, `DATABASE_URL`, Cloudinary keys, API keys). Avoid committing real credentials or sample values that look production-ready.
 - README.md is empty — do not assume it contains setup docs; use the commands above as canonical.
 
 6) What to look for when editing

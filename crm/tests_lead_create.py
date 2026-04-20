@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from crm.models import Historico, Lead, PipelineStage
@@ -64,6 +64,19 @@ class LeadCreateViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(PipelineStage.objects.filter(nome='Aguardando retorno').exists())
+
+    def test_create_stage_api_requires_csrf_token(self):
+        csrf_client = Client(enforce_csrf_checks=True)
+        csrf_client.force_login(self.user)
+
+        response = csrf_client.post(
+            reverse('crm:api_criar_estagio'),
+            data='{"nome": "Sem token"}',
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(PipelineStage.objects.filter(nome='Sem token').exists())
 
     def test_rename_stage_api_updates_stage_name(self):
         self.client.force_login(self.user)

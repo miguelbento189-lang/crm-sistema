@@ -16,6 +16,7 @@ import decouple
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from django.core.exceptions import ImproperlyConfigured
 
 config = decouple.config
 DECOUPLE_UNDEFINED_VALUE_ERROR = getattr(decouple, 'UndefinedValueError', KeyError)
@@ -75,14 +76,26 @@ def build_database_config(database_url, *, require_ssl=True):
 # ==============================================================================
 # 2. SEGURANÇA
 # ==============================================================================
-SECRET_KEY = env_str('SECRET_KEY', default='django-insecure-portfolio-crm-2026')
+SECRET_KEY = env_str('SECRET_KEY', default='')
 DEBUG = env_bool('DEBUG', default=True)
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-portfolio-crm-dev-only'
+    else:
+        raise ImproperlyConfigured('Configure SECRET_KEY no ambiente antes de iniciar a aplicação com DEBUG=False.')
+
+if not DEBUG and SECRET_KEY.startswith('troque-esta-chave'):
+    raise ImproperlyConfigured('Defina uma SECRET_KEY real no ambiente antes de publicar a aplicação.')
+
 ALLOWED_HOSTS = csv_env(
     'ALLOWED_HOSTS',
     default='localhost,127.0.0.1'
 )
 if env_bool('ALLOW_ALL_HOSTS', default=False):
-    ALLOWED_HOSTS = ['*']
+    if DEBUG:
+        ALLOWED_HOSTS = ['*']
+    else:
+        raise ImproperlyConfigured('ALLOW_ALL_HOSTS só pode ser habilitado com DEBUG=True.')
 CSRF_TRUSTED_ORIGINS = csv_env('CSRF_TRUSTED_ORIGINS')
 RENDER_EXTERNAL_HOSTNAME = env_str('RENDER_EXTERNAL_HOSTNAME', default='').strip()
 if RENDER_EXTERNAL_HOSTNAME:

@@ -7,7 +7,6 @@ from django.db import transaction
 from django.db.models import Max, Prefetch, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.csrf import csrf_exempt
 
 from .models import Historico, Lead, PipelineStage
 
@@ -76,7 +75,6 @@ def crm_dashboard_view(request):
     return render(request, 'crm/crm_dashboard.html', context)
 
 
-@csrf_exempt
 @login_required
 def api_mover_lead(request):
     if request.method != 'POST':
@@ -103,7 +101,6 @@ def api_mover_lead(request):
         return JsonResponse({'status': 'error', 'message': str(exc)}, status=400)
 
 
-@csrf_exempt
 @login_required
 def api_criar_estagio(request):
     if request.method != 'POST':
@@ -135,7 +132,6 @@ def api_criar_estagio(request):
         return JsonResponse({'status': 'error', 'message': str(exc)}, status=400)
 
 
-@csrf_exempt
 @login_required
 def api_reordenar_estagios(request):
     if request.method != 'POST':
@@ -168,7 +164,6 @@ def api_reordenar_estagios(request):
         return JsonResponse({'status': 'error', 'message': str(exc)}, status=400)
 
 
-@csrf_exempt
 @login_required
 def api_renomear_estagio(request):
     if request.method != 'POST':
@@ -190,7 +185,6 @@ def api_renomear_estagio(request):
         return JsonResponse({'status': 'error', 'message': str(exc)}, status=400)
 
 
-@csrf_exempt
 @login_required
 def api_excluir_estagio(request):
     if request.method != 'POST':
