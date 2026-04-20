@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block page_title %}CRM Pipeline{% endblock %} | CRM de Leads</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8bc269',
+            accent: '#89cdc4',
+            secondary: '#68ae5c',
+            charcoal: '#242424',
+            soft: '#dddddd',
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --crm-primary: #8bc269;
+      --crm-accent: #89cdc4;
+      --crm-secondary: #68ae5c;
+      --crm-charcoal: #242424;
+      --crm-soft: #dddddd;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(137, 205, 196, 0.22), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(139, 194, 105, 0.18), transparent 30%),
+        linear-gradient(180deg, #f7f7f7 0%, #efefef 54%, #e7e7e7 100%);
+      color: var(--crm-charcoal);
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: -0.03em;
+    }
+
+    .pipeline-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+    }
+
+    .pipeline-sidebar {
+      background: linear-gradient(180deg, rgba(36, 36, 36, 0.98), rgba(104, 174, 92, 0.95));
+      color: white;
+      border-right: 1px solid rgba(221, 221, 221, 0.22);
+      box-shadow: 0 28px 60px -34px rgba(36, 36, 36, 0.42);
+    }
+
+    .pipeline-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border: 1px solid rgba(221, 221, 221, 0.12);
+      border-radius: 1rem;
+      padding: 0.9rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: background-color 0.24s ease, border-color 0.24s ease, transform 0.24s ease, box-shadow 0.24s ease;
+    }
+
+    .pipeline-link:hover {
+      background: rgba(137, 205, 196, 0.18);
+      border-color: rgba(137, 205, 196, 0.4);
+      box-shadow: 0 18px 30px -26px rgba(0, 0, 0, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .pipeline-link.is-active {
+      background: rgba(139, 194, 105, 0.22);
+      border-color: rgba(139, 194, 105, 0.55);
+      box-shadow: inset 0 0 0 1px rgba(137, 205, 196, 0.22);
+    }
+
+    .message-card {
+      border-radius: 1rem;
+      border: 1px solid rgba(137, 205, 196, 0.35);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.9rem 1rem;
+      box-shadow: 0 18px 40px -32px rgba(36, 36, 36, 0.22);
+    }
+
+    .panel-surface {
+      border-radius: 1.5rem;
+      border: 1px solid rgba(221, 221, 221, 0.88);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 24px 60px -48px rgba(36, 36, 36, 0.22);
+      transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+    }
+
+    .panel-surface:hover {
+      border-color: rgba(137, 205, 196, 0.5);
+      box-shadow: 0 28px 70px -46px rgba(36, 36, 36, 0.28);
+      transform: translateY(-2px);
+    }
+
+    .input-shell {
+      width: 100%;
+      border: 1px solid rgba(221, 221, 221, 0.95);
+      background: rgba(255, 255, 255, 0.96);
+      color: rgba(36, 36, 36, 0.92);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .input-shell:hover {
+      border-color: rgba(137, 205, 196, 0.58);
+      background: white;
+    }
+
+    .input-shell:focus {
+      border-color: rgba(104, 174, 92, 0.82);
+      box-shadow: 0 0 0 4px rgba(137, 205, 196, 0.18);
+      background: white;
+      transform: translateY(-1px);
+    }
+
+    .btn-soft {
+      transition: transform 0.22s ease, background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .btn-soft:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 30px -24px rgba(36, 36, 36, 0.2);
+    }
+
+    .page-intro {
+      animation: fade-slide-up 0.45s ease-out;
+    }
+
+    .stagger-pop {
+      animation: fade-slide-up 0.55s ease-out;
+    }
+
+    @keyframes fade-slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .pipeline-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .pipeline-sidebar {
+        border-right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="pipeline-shell">
+    <aside class="pipeline-sidebar p-6 lg:p-7">
+      <div class="flex h-full flex-col gap-8">
+        <div>
+          <p class="text-[11px] font-black uppercase tracking-[0.32em] text-white/72">CRM de Leads</p>
+          <h1 class="mt-3 text-3xl font-black text-white">Pipeline Comercial</h1>
+          <p class="mt-3 max-w-xs text-sm leading-6 text-white/82">Ambiente dedicado para captacao, qualificacao e acompanhamento dos leads do CRM.</p>
+        </div>
+
+        <nav class="grid gap-3">
+          <a href="{% url 'crm:crm_dashboard' %}" class="pipeline-link {% if request.resolver_match.url_name == 'crm_dashboard' %}is-active{% endif %}">
+            <i data-lucide="kanban-square" class="h-5 w-5"></i>
+            <span>Pipeline</span>
+          </a>
+          <a href="{% url 'crm:cadastrar_lead' %}" class="pipeline-link {% if request.resolver_match.url_name == 'cadastrar_lead' %}is-active{% endif %}">
+            <i data-lucide="user-plus" class="h-5 w-5"></i>
+            <span>Novo Lead</span>
+          </a>
+        </nav>
+
+        <div class="mt-auto rounded-[1.75rem] border border-white/12 bg-white/10 p-5 backdrop-blur">
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[rgba(137,205,196,0.22)] text-sm font-black uppercase text-white">
+              {{ user.username|default:'CRM'|slice:':2' }}
+            </div>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-bold text-white">{{ user.get_full_name|default:user.username }}</p>
+              <p class="truncate text-xs font-medium text-white/72">Operacao comercial</p>
+            </div>
+          </div>
+          <form action="{% url 'product_logout' %}" method="post" class="mt-4">
+            {% csrf_token %}
+            <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/16 bg-white/10 px-4 py-3 text-xs font-black uppercase tracking-[0.22em] text-white transition hover:bg-[rgba(137,205,196,0.18)]">
+              <i data-lucide="log-out" class="h-4 w-4"></i>
+              Sair
+            </button>
+          </form>
+        </div>
+      </div>
+    </aside>
+
+    <div class="min-w-0">
+      <header class="px-4 pt-4 md:px-6 md:pt-6 lg:px-8">
+        <div class="page-intro rounded-[2rem] border border-white/70 bg-white/88 px-6 py-5 shadow-[0_24px_70px_-50px_rgba(36,36,36,0.35)] backdrop-blur">
+          <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="text-[11px] font-black uppercase tracking-[0.28em] text-secondary">Modulo ativo</p>
+              <h2 class="mt-2 text-2xl font-black text-charcoal">{% block header_title %}CRM Pipeline{% endblock %}</h2>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="px-4 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8">
+        {% if messages %}
+          <div class="mb-6 grid gap-3">
+            {% for message in messages %}
+              <div class="message-card text-sm font-semibold {% if message.tags == 'error' %}border-red-200 text-red-700{% elif message.tags == 'success' %}border-primary/50 text-secondary{% else %}text-charcoal/80{% endif %}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

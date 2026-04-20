@@ -1,0 +1,160 @@
+{% extends 'crm/pipeline_base.html' %}
+
+{% block header_title %}Cadastro Alternativo{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div class="max-w-5xl mx-auto pb-10">
+    <div class="mb-6">
+        <h2 class="text-3xl font-bold text-charcoal">Novo Cliente</h2>
+        <p class="text-charcoal/60">Cadastro completo com geolocalização.</p>
+    </div>
+
+    <form method="POST" action="{% url 'crm:cadastrar_lead' %}" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {% csrf_token %}
+
+        <div class="space-y-6">
+            <div class="bg-white p-6 rounded-[24px] shadow-sm border border-soft">
+                <h4 class="text-xs font-bold text-charcoal/45 uppercase tracking-widest mb-4 flex items-center gap-2"><i data-lucide="user" class="w-4 h-4 text-secondary"></i> Dados Básicos</h4>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-charcoal mb-1">Nome / Razão Social</label>
+                        <input type="text" name="nome" required class="w-full bg-white border border-soft rounded-xl px-4 py-2.5 focus:border-secondary focus:ring-2 focus:ring-accent/20 outline-none font-medium text-charcoal">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-charcoal mb-1">WhatsApp</label>
+                            <input type="text" name="whatsapp" required class="w-full bg-white border border-soft rounded-xl px-4 py-2.5 focus:border-secondary focus:ring-2 focus:ring-accent/20 outline-none font-medium text-charcoal">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-charcoal mb-1">CPF / CNPJ</label>
+                            <input type="text" name="documento" class="w-full bg-white border border-soft rounded-xl px-4 py-2.5 focus:border-secondary focus:ring-2 focus:ring-accent/20 outline-none font-medium text-charcoal">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[24px] shadow-sm border border-soft relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-accent"></div>
+                <h4 class="text-xs font-bold text-charcoal/45 uppercase tracking-widest mb-4 flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-accent"></i> Localização</h4>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="col-span-1">
+                            <label class="block text-xs font-bold text-charcoal/55 mb-1">CEP</label>
+                            <input type="text" id="cep" name="cep" class="w-full bg-accent/10 border border-accent/30 text-charcoal rounded-xl px-4 py-2.5 outline-none font-bold" onblur="buscarCep()">
+                        </div>
+                        <div class="col-span-2 flex gap-2">
+                            <input type="text" id="cidade" name="cidade" readonly class="w-full bg-soft/50 border border-soft rounded-xl px-4 py-2.5 text-charcoal/60 cursor-not-allowed">
+                            <input type="text" id="uf" name="estado" readonly class="w-16 bg-soft/50 border border-soft rounded-xl px-2 py-2.5 text-center text-charcoal/60 cursor-not-allowed">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-charcoal/55 mb-1">Endereço</label>
+                        <input type="text" id="endereco" name="endereco" class="w-full bg-white border border-soft rounded-xl px-4 py-2.5 outline-none font-medium text-charcoal">
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="col-span-1">
+                            <label class="block text-xs font-bold text-charcoal/55 mb-1">Número</label>
+                            <input type="text" id="numero" name="numero" class="w-full bg-white border border-soft rounded-xl px-4 py-2.5 outline-none font-medium text-charcoal">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-charcoal/55 mb-1">Bairro</label>
+                            <input type="text" id="bairro" name="bairro" class="w-full bg-white border border-soft rounded-xl px-4 py-2.5 outline-none font-medium text-charcoal">
+                        </div>
+                    </div>
+                    <input type="hidden" id="latitude" name="latitude"><input type="hidden" id="longitude" name="longitude">
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-white p-2 rounded-[24px] shadow-sm border border-soft h-[250px] relative z-0">
+                <div id="map" class="w-full h-full rounded-[20px] z-0"></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[24px] shadow-sm border border-soft">
+                <h4 class="text-xs font-bold text-charcoal/45 uppercase tracking-widest mb-4 flex items-center gap-2"><i data-lucide="briefcase" class="w-4 h-4 text-primary"></i> Detalhes</h4>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-charcoal mb-1">Categoria</label>
+                        <select name="servico" class="w-full bg-white border border-soft rounded-xl px-4 py-2.5 outline-none font-bold text-charcoal">
+                            <option value="solar">☀️ Energia Solar</option>
+                            <option value="climatizacao">❄️ Climatização</option>
+                            <option value="eletrica">⚡ Elétrica</option>
+                            <option value="automacao">🤖 Automação</option>
+                            <option value="geral">🏢 Geral / Civil</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-charcoal mb-1">Origem</label>
+                            <select name="origem" class="w-full bg-white border border-soft rounded-xl px-4 py-2.5 outline-none font-bold text-charcoal">
+                                <option value="instagram">📸 Instagram</option>
+                                <option value="site">🌐 Site</option>
+                                <option value="indicacao">🤝 Indicação</option>
+                                <option value="ativo">📞 Ativo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-charcoal mb-1">Valor Est. (R$)</label>
+                            <input type="number" name="valor" placeholder="0,00" class="w-full bg-white border border-soft rounded-xl px-4 py-2.5 outline-none font-bold text-charcoal">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <a href="{% url 'crm:crm_dashboard' %}" class="flex-1 bg-soft/70 hover:bg-soft text-charcoal/70 py-4 rounded-2xl font-bold text-center transition">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="flex-[2] bg-charcoal hover:bg-secondary text-white py-4 rounded-2xl font-bold shadow-lg shadow-black/10 transition transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i> Salvar Cliente
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    var map = L.map('map').setView([-17.8814, -51.7144], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(map);
+    var marker;
+
+    function buscarCep() {
+        var cep = document.getElementById('cep').value.replace(/\D/g, '');
+        if (cep !== '') {
+            fetch(`https://viacep.com.br/ws/${cep}/json/`).then(r => r.json()).then(d => {
+                if (!("erro" in d)) {
+                    document.getElementById('endereco').value = d.logradouro;
+                    document.getElementById('bairro').value = d.bairro;
+                    document.getElementById('cidade').value = d.localidade;
+                    document.getElementById('uf').value = d.uf;
+                    buscarNoMapa(d.logradouro + ', ' + d.localidade);
+                }
+            });
+        }
+    }
+
+    function buscarNoMapa(texto) {
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${texto}`).then(r => r.json()).then(d => {
+            if (d.length > 0) {
+                var lat = d[0].lat;
+                var lon = d[0].lon;
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lon;
+                map.setView([lat, lon], 16);
+                if (marker) {
+                    marker.setLatLng([lat, lon]);
+                } else {
+                    marker = L.marker([lat, lon]).addTo(map);
+                }
+            }
+        });
+    }
+
+    lucide.createIcons();
+</script>
+{% endblock %}

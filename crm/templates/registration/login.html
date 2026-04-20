@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - {{ active_brand_name|default:'CRM de Leads' }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#004000',
+                        accent: '#003300',
+                        secondary: '#002600',
+                        charcoal: '#001900',
+                        soft: '#000c00',
+                        white: '#FFFFFF',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --login-primary: #004000;
+            --login-accent: #003300;
+            --login-secondary: #002600;
+            --login-charcoal: #001900;
+            --login-soft: #000c00;
+        }
+
+        body {
+            font-family: 'Open Sans', 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(0, 64, 0, 0.42), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(0, 51, 0, 0.55), transparent 34%),
+                linear-gradient(145deg, #000c00 0%, #001900 28%, #002600 54%, #003300 76%, #004000 100%);
+            color: rgba(255, 255, 255, 0.92);
+        }
+
+        .login-card {
+            animation: fade-slide-up 0.5s ease-out;
+            background: linear-gradient(180deg, rgba(0, 25, 0, 0.9), rgba(0, 12, 0, 0.96));
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 80px -34px rgba(0, 0, 0, 0.72);
+        }
+
+        .login-input {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.94);
+            transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease, background-color 0.22s ease;
+        }
+
+        .login-input:hover {
+            border-color: rgba(0, 64, 0, 0.95);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .login-input:focus {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fade-slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Montserrat', sans-serif;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center py-8 px-2">
+    <main class="w-full max-w-md mx-auto">
+        <section class="login-card relative rounded-3xl border px-6 sm:px-10 py-10 overflow-hidden flex flex-col items-center">
+            <div class="pointer-events-none select-none absolute -top-24 -right-24 w-48 h-48 bg-primary/45 rounded-full blur-3xl"></div>
+            <div class="pointer-events-none select-none absolute -bottom-24 -left-24 w-48 h-48 bg-accent/45 rounded-full blur-3xl"></div>
+            <div class="pointer-events-none select-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+
+            <header class="w-full text-center mb-8 z-10 relative flex flex-col items-center">
+                {% if active_tenant %}
+                <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.22em] text-white/80 backdrop-blur-sm">
+                    Ambiente {{ active_tenant.slug }}
+                </div>
+                {% endif %}
+                <h1 class="text-2xl font-black text-white tracking-[0.2em]">CRM DE LEADS</h1>
+                <p class="mt-3 text-sm font-semibold text-white/72">{{ active_brand_name|default:'CRM de Leads' }}</p>
+                {% if active_brand_cnpj %}
+                <p class="mt-2 text-[11px] font-semibold text-white/48">CNPJ {{ active_brand_cnpj }}</p>
+                {% endif %}
+                {% if active_tenant.site_tagline %}
+                <p class="mt-2 text-xs text-white/48">{{ active_tenant.site_tagline }}</p>
+                {% endif %}
+                <p class="mt-3 max-w-xs text-xs leading-5 text-white/52">Entre para acompanhar o funil com foco em contexto, próxima ação e velocidade de resposta.</p>
+                <div class="h-1 w-10 bg-primary mx-auto mt-3 rounded-full shadow-[0_0_20px_rgba(0,64,0,0.6)]"></div>
+            </header>
+
+            <form method="POST" class="w-full space-y-5 z-10 relative">
+                {% csrf_token %}
+                {% if form.errors %}
+                <div class="bg-white/6 text-white/88 p-4 rounded-2xl text-xs font-bold text-center border border-primary/55 backdrop-blur-sm">
+                    Acesso negado. Verifique os dados.
+                </div>
+                {% endif %}
+
+                <div class="space-y-1">
+                    <label class="block text-[11px] font-bold text-white/72 uppercase tracking-widest ml-1">Utilizador</label>
+                    <div class="relative group">
+                        <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-white transition-colors"></i>
+                        <input type="text" name="username" class="login-input w-full rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-semibold placeholder:text-white/30" placeholder="Digite seu utilizador" required value="{{ form.username.value|default:'' }}">
+                    </div>
+                    {% if form.username.errors %}
+                    <div class="text-xs text-white/72 mt-1 ml-1">{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-[11px] font-bold text-white/72 uppercase tracking-widest ml-1">Palavra-passe</label>
+                    <div class="relative group">
+                        <i data-lucide="lock-keyhole" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-white transition-colors"></i>
+                        <input type="password" name="password" class="login-input w-full rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-semibold placeholder:text-white/30" placeholder="••••••••" required>
+                    </div>
+                    {% if form.password.errors %}
+                    <div class="text-xs text-white/72 mt-1 ml-1">{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="group relative w-full overflow-hidden rounded-2xl bg-primary p-px font-bold text-white shadow-xl transition-all duration-300 hover:scale-[1.015] hover:shadow-2xl active:scale-95 mt-2">
+                    <div class="relative flex items-center justify-center gap-3 bg-[linear-gradient(180deg,#004000_0%,#003300_100%)] px-8 py-4 transition-all duration-300 group-hover:bg-[linear-gradient(180deg,#003300_0%,#001900_100%)]">
+                        <span class="tracking-wide text-sm">ENTRAR NO PAINEL</span>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-white group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                    <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/12 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
+                </button>
+            </form>
+
+            <footer class="w-full mt-10 text-center border-t border-white/8 pt-6">
+                <p class="text-[9px] text-white/72 font-bold uppercase tracking-[0.3em]">{{ active_brand_name|default:'CRM de Leads' }} © 2026</p>
+                {% if active_brand_support_email %}
+                <p class="mt-2 text-[10px] text-white/46">Suporte: {{ active_brand_support_email }}</p>
+                {% endif %}
+            </footer>
+        </section>
+    </main>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

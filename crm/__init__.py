@@ -1,0 +1,1 @@
+# Ativa o módulo de roteirização estratégica

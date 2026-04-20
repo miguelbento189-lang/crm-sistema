@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: portfolio-crm
+    env: python
+    plan: starter
+    buildCommand: bash scripts/render-build.sh
+    startCommand: bash scripts/render-start.sh
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: DEBUG
+        value: "False"
+      - key: USE_SQLITE
+        value: "False"
+      - key: DISABLE_STATIC_MANIFEST
+        value: "True"
+      - key: USE_X_FORWARDED_HOST
+        value: "True"
+      - key: SECURE_SSL_REDIRECT
+        value: "True"
+      - key: SESSION_COOKIE_SECURE
+        value: "True"
+      - key: CSRF_COOKIE_SECURE
+        value: "True"
+      - key: SECRET_KEY
+        generateValue: true
+      # Configure estas variáveis no serviço do Render ou neste blueprint:
+      # - key: DATABASE_URL
+      #   fromDatabase:
+      #     name: portfolio-crm-db
+      #     property: connectionString
+      # - key: ALLOWED_HOSTS
+      #   value: portfolio-crm.onrender.com
+      # - key: CSRF_TRUSTED_ORIGINS
+      #   value: https://portfolio-crm.onrender.com
+      # - key: CLOUDINARY_STORAGE_CLOUD_NAME
+      #   value: seu-cloud-name
+      # - key: CLOUDINARY_STORAGE_API_KEY
+      #   value: sua-api-key
+      # - key: CLOUDINARY_STORAGE_API_SECRET
+      #   value: sua-api-secret
+    autoDeploy: true

@@ -1,0 +1,1511 @@
+{% extends 'crm/pipeline_base.html' %}
+
+{% load static %}
+
+
+
+{% block header_title %}Pipeline de Negócios{% endblock %}
+
+
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+
+
+<style>
+
+    /* --- BORDAS LATERAIS (Serviços) --- */
+
+    .card-solar { border-left: 4px solid #8bc269 !important; }
+
+    .card-clima { border-left: 4px solid #89cdc4 !important; }
+
+    .card-eletrica { border-left: 4px solid #68ae5c !important; }
+
+    .card-automacao { border-left: 4px solid #242424 !important; }
+
+    .card-geral { border-left: 4px solid #dddddd !important; }
+
+
+
+    /* --- TAGS (Serviços & Origem) --- */
+
+    /* Serviço */
+
+    .bg-solar { background-color: rgba(139, 194, 105, 0.16); color: #68ae5c; border: 1px solid rgba(139, 194, 105, 0.35); }
+
+    .bg-clima { background-color: rgba(137, 205, 196, 0.18); color: #242424; border: 1px solid rgba(137, 205, 196, 0.4); }
+
+    .bg-eletrica { background-color: rgba(104, 174, 92, 0.15); color: #68ae5c; border: 1px solid rgba(104, 174, 92, 0.3); }
+
+    .bg-automacao { background-color: rgba(36, 36, 36, 0.08); color: #242424; border: 1px solid rgba(36, 36, 36, 0.16); }
+
+    .bg-geral { background-color: rgba(221, 221, 221, 0.48); color: #242424; border: 1px solid rgba(36, 36, 36, 0.08); }
+
+
+    /* Origem */
+
+    .tag-insta { background-color: rgba(137, 205, 196, 0.18); color: #242424; border: 1px solid rgba(137, 205, 196, 0.42); }
+
+    .tag-google { background-color: rgba(139, 194, 105, 0.16); color: #68ae5c; border: 1px solid rgba(139, 194, 105, 0.35); }
+
+    .tag-indicacao { background-color: rgba(104, 174, 92, 0.14); color: #68ae5c; border: 1px solid rgba(104, 174, 92, 0.28); }
+
+    .tag-outros { background-color: rgba(221, 221, 221, 0.5); color: #242424; border: 1px solid rgba(36, 36, 36, 0.08); }
+
+
+
+    /* --- KANBAN CARD --- */
+
+    .kanban-card {
+
+        cursor: grab;
+
+        position: relative;
+
+        background: white;
+
+        display: flex;
+
+        flex-direction: column;
+
+        min-height: 280px;
+
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+
+        z-index: 1;
+
+    }
+
+    .kanban-card:hover {
+
+        transform: translateY(-4px);
+
+        border-color: rgba(137, 205, 196, 0.52);
+
+        box-shadow: 0 24px 42px -32px rgba(0, 0, 0, 0.28);
+
+        z-index: 10;
+
+    }
+
+    .kanban-card:active { cursor: grabbing; z-index: 20; }
+
+    .sortable-ghost { opacity: 0.4; background: rgba(137, 205, 196, 0.28); border: 2px dashed rgba(36, 36, 36, 0.28); }
+
+   
+
+    /* --- SCROLLBAR --- */
+
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(137, 205, 196, 0.7); border-radius: 10px; }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(104, 174, 92, 0.8); }
+
+    .kanban-card-body {
+
+        display: flex;
+
+        flex: 1;
+
+        flex-direction: column;
+
+        gap: 0.75rem;
+
+        min-width: 0;
+
+    }
+
+    .kanban-card-title {
+
+        display: -webkit-box;
+
+        -webkit-line-clamp: 2;
+
+        -webkit-box-orient: vertical;
+
+        overflow: hidden;
+
+        word-break: break-word;
+
+    }
+
+    .kanban-card-meta {
+
+        display: grid;
+
+        gap: 0.35rem;
+
+    }
+
+    .kanban-card-meta-item {
+
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 0.35rem;
+
+        min-width: 0;
+
+        font-size: 11px;
+
+        line-height: 1.4;
+
+        color: rgba(36, 36, 36, 0.65);
+
+    }
+
+    .kanban-card-meta-item span {
+
+        min-width: 0;
+
+        overflow-wrap: anywhere;
+
+    }
+
+    .kanban-history {
+
+        margin-top: auto;
+
+        border-top: 1px solid rgba(221, 221, 221, 0.9);
+
+        padding-top: 0.65rem;
+
+    }
+
+    .kanban-history-list {
+
+        display: grid;
+
+        gap: 0.45rem;
+
+    }
+
+    .kanban-history-item {
+
+        display: grid;
+
+        grid-template-columns: auto 1fr;
+
+        gap: 0.5rem;
+
+        align-items: flex-start;
+
+    }
+
+    .kanban-history-copy {
+
+        min-width: 0;
+
+    }
+
+    .kanban-history-note {
+
+        font-size: 11px;
+
+        line-height: 1.45;
+
+        color: rgba(36, 36, 36, 0.78);
+
+        display: -webkit-box;
+
+        -webkit-line-clamp: 2;
+
+        -webkit-box-orient: vertical;
+
+        overflow: hidden;
+
+        overflow-wrap: anywhere;
+
+    }
+
+    .kanban-history-date {
+
+        margin-top: 0.1rem;
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        color: rgba(36, 36, 36, 0.45);
+
+    }
+
+    .dashboard-reveal {
+        animation: fade-slide-up 0.48s ease-out;
+    }
+
+    .dashboard-reveal-delay {
+        animation: fade-slide-up 0.58s ease-out;
+    }
+
+    .stage-handle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.9rem;
+        height: 1.9rem;
+        border-radius: 999px;
+        border: 1px solid rgba(221, 221, 221, 0.95);
+        background: rgba(255, 255, 255, 0.9);
+        color: rgba(36, 36, 36, 0.45);
+        cursor: grab;
+        transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .stage-handle:hover {
+        transform: translateY(-1px);
+        border-color: rgba(137, 205, 196, 0.45);
+        background: rgba(137, 205, 196, 0.12);
+        color: rgba(36, 36, 36, 0.75);
+    }
+
+    .stage-empty {
+        border: 1px dashed rgba(137, 205, 196, 0.42);
+        border-radius: 1rem;
+        padding: 1rem;
+        background: rgba(137, 205, 196, 0.08);
+        color: rgba(36, 36, 36, 0.58);
+        font-size: 0.78rem;
+        font-weight: 600;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    .stage-order-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 1.75rem;
+        height: 1.75rem;
+        padding: 0 0.45rem;
+        border-radius: 999px;
+        border: 1px solid rgba(36, 36, 36, 0.08);
+        background: rgba(255, 255, 255, 0.88);
+        color: rgba(36, 36, 36, 0.68);
+        font-size: 0.68rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .stage-dot {
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--stage-color) 16%, transparent);
+        background: var(--stage-color, #89cdc4);
+        flex-shrink: 0;
+    }
+
+    .stage-count-pill {
+        border: 1px solid rgba(36, 36, 36, 0.08);
+        background: rgba(255, 255, 255, 0.88);
+        color: rgba(36, 36, 36, 0.72);
+    }
+
+    .action-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 999px;
+        border: 1px solid rgba(36, 36, 36, 0.08);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0.75rem 1rem;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #242424;
+        transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .action-pill:hover {
+        transform: translateY(-1px);
+        border-color: rgba(137, 205, 196, 0.44);
+        background: rgba(137, 205, 196, 0.12);
+        box-shadow: 0 14px 24px -20px rgba(36, 36, 36, 0.24);
+    }
+
+    .action-pill-primary {
+        background: rgba(36, 36, 36, 0.94);
+        color: white;
+        border-color: rgba(36, 36, 36, 0.92);
+    }
+
+    .action-pill-primary:hover {
+        border-color: rgba(104, 174, 92, 0.45);
+        background: rgba(36, 36, 36, 0.98);
+    }
+
+    .action-pill-danger {
+        background: rgba(255, 255, 255, 0.92);
+        color: rgba(155, 28, 28, 0.9);
+        border-color: rgba(248, 113, 113, 0.2);
+    }
+
+    .action-pill-danger:hover {
+        border-color: rgba(248, 113, 113, 0.32);
+        background: rgba(254, 242, 242, 0.92);
+    }
+
+    .stage-manager-shell {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(104, 174, 92, 0.14);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(248, 250, 248, 0.88));
+    }
+
+    .stage-manager-shell::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top right, rgba(137, 205, 196, 0.12), transparent 34%);
+        pointer-events: none;
+    }
+
+    .stage-manager-note {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border-radius: 999px;
+        border: 1px solid rgba(36, 36, 36, 0.06);
+        background: rgba(255, 255, 255, 0.72);
+        padding: 0.55rem 0.8rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: rgba(36, 36, 36, 0.58);
+    }
+
+    .stage-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.85rem;
+        height: 1.85rem;
+        border-radius: 999px;
+        border: 1px solid rgba(221, 221, 221, 0.95);
+        background: rgba(255, 255, 255, 0.92);
+        color: rgba(36, 36, 36, 0.55);
+        transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .stage-action-btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(137, 205, 196, 0.42);
+        background: rgba(137, 205, 196, 0.12);
+        color: rgba(36, 36, 36, 0.88);
+    }
+
+    .dashboard-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+    }
+
+    .dashboard-modal.is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .dashboard-modal-panel {
+        transform: translateY(10px) scale(0.98);
+        transition: transform 0.22s ease;
+    }
+
+    .dashboard-modal.is-open .dashboard-modal-panel {
+        transform: translateY(0) scale(1);
+    }
+
+    @keyframes fade-slide-up {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+</style>
+
+
+
+<div class="h-full flex flex-col max-w-[1920px] mx-auto w-full p-2 md:p-4 gap-4">
+
+
+
+    <div class="dashboard-reveal relative overflow-hidden rounded-[30px] border border-primary/35 bg-[linear-gradient(135deg,#242424_0%,#68ae5c_52%,#89cdc4_100%)] px-6 py-7 md:px-8 md:py-8 text-white shadow-[0_30px_80px_-40px_rgba(36,36,36,0.55)]">
+
+        <div class="absolute inset-y-0 right-0 w-1/3 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.24),transparent_62%)]"></div>
+
+        <div class="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+
+            <div class="max-w-3xl">
+
+                <p class="text-[11px] font-black uppercase tracking-[0.28em] text-soft/90">Pipeline Comercial</p>
+
+                <h2 class="mt-3 text-3xl font-black tracking-tight text-white md:text-4xl">Visão rápida do funil.</h2>
+
+            </div>
+
+            <div class="flex flex-col items-start gap-3 md:items-end">
+
+                <a href="{% url 'crm:cadastrar_lead' %}" class="btn-soft inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-black text-charcoal shadow-lg shadow-black/15 transition hover:-translate-y-0.5 hover:bg-soft">
+
+                    <i data-lucide="plus" class="w-4 h-4"></i> Novo lead
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <div class="dashboard-reveal-delay panel-surface px-6 py-5 flex flex-col justify-center h-40 relative overflow-hidden">
+
+            <div class="relative z-10 flex items-center justify-between mb-2">
+
+                <p class="text-xs font-bold text-charcoal/45 uppercase tracking-widest">Total Ativos</p>
+
+                <div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center text-charcoal">
+
+                    <i data-lucide="layers" class="w-5 h-5"></i>
+
+                </div>
+
+            </div>
+
+            <h3 class="text-4xl font-extrabold text-charcoal">{{ kpi_total_ativos }}</h3>
+
+            <p class="text-xs text-charcoal/45 mt-1">Leads em andamento</p>
+
+        </div>
+
+
+
+        <div class="dashboard-reveal-delay panel-surface px-6 py-5 flex flex-col justify-center h-40 relative overflow-hidden" style="animation-delay: 0.04s;">
+
+            <div class="relative z-10 flex items-center justify-between mb-2">
+
+                <p class="text-xs font-bold text-charcoal/45 uppercase tracking-widest">Em Negociação</p>
+
+                <div class="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center text-secondary">
+
+                    <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+
+                </div>
+
+            </div>
+
+            <h3 class="text-4xl font-extrabold text-secondary tracking-tight">
+
+                <span class="text-lg align-top mr-0.5 text-primary">R$</span>{{ kpi_valor_negociacao|floatformat:0 }}
+
+            </h3>
+
+            <p class="text-xs text-charcoal/45 mt-1">Valor em aberto</p>
+
+        </div>
+
+
+
+        <div class="dashboard-reveal-delay panel-surface px-2 py-0 h-40 flex items-center relative overflow-hidden" style="animation-delay: 0.08s;">
+
+            <div class="w-[60%] h-full flex items-center justify-center">
+
+                 <div id="chart-origem" class="mt-2"></div>
+
+            </div>
+
+            <div class="w-[40%] flex flex-col justify-center gap-2 pr-4 text-right border-l border-soft/70 pl-2 py-2">
+
+                <p class="text-[10px] font-bold text-charcoal/45 uppercase tracking-widest mb-1">Origens</p>
+
+                <div class="flex items-center justify-end gap-2"><span class="text-xs font-bold text-charcoal/80">Site / Google</span><span class="w-2.5 h-2.5 rounded-full bg-secondary"></span></div>
+
+                <div class="flex items-center justify-end gap-2"><span class="text-xs font-bold text-charcoal/80">Instagram</span><span class="w-2.5 h-2.5 rounded-full bg-accent"></span></div>
+
+                <div class="flex items-center justify-end gap-2"><span class="text-xs font-bold text-charcoal/80">Indicação</span><span class="w-2.5 h-2.5 rounded-full bg-primary"></span></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="panel-surface stage-manager-shell px-5 py-4">
+        <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div class="max-w-xl">
+                <p class="text-[11px] font-black uppercase tracking-[0.24em] text-secondary">Etapas</p>
+                <h3 class="mt-1 text-lg font-black text-charcoal">Defina como o quadro distribui os leads.</h3>
+                <p class="mt-2 text-xs leading-5 text-charcoal/48">Crie, renomeie ou remova colunas para refletir melhor o avanço comercial.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+                <button type="button" class="action-pill action-pill-primary" data-modal-open="create-stage-modal">
+                    <i data-lucide="plus" class="h-4 w-4"></i>
+                    Criar coluna
+                </button>
+                <button type="button" class="action-pill" data-modal-open="rename-stage-modal">
+                    <i data-lucide="pencil-line" class="h-4 w-4"></i>
+                    Editar nome
+                </button>
+                <button type="button" class="action-pill action-pill-danger" data-modal-open="delete-stage-modal">
+                    <i data-lucide="trash-2" class="h-4 w-4"></i>
+                    Remover coluna
+                </button>
+            </div>
+        </div>
+        <div class="relative z-10 mt-3 flex flex-wrap gap-2">
+            <span class="stage-manager-note">
+                <i data-lucide="grip-vertical" class="h-3.5 w-3.5"></i>
+                Reordene pelo ícone lateral
+            </span>
+            <span class="stage-manager-note">
+                <i data-lucide="columns-3" class="h-3.5 w-3.5"></i>
+                Cada coluna representa uma etapa do funil
+            </span>
+        </div>
+        <p data-stage-feedback class="mt-3 min-h-[1.25rem] text-xs font-semibold text-charcoal/55"></p>
+    </div>
+
+    <div id="create-stage-modal" class="dashboard-modal" aria-hidden="true">
+        <div class="absolute inset-0 bg-charcoal/45 backdrop-blur-sm" data-modal-close></div>
+        <div class="dashboard-modal-panel relative z-10 w-full max-w-md rounded-[28px] border border-white/60 bg-white p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.45)]">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-secondary">Nova etapa</p>
+                    <h4 class="mt-2 text-xl font-black text-charcoal">Adicionar coluna</h4>
+                    <p class="mt-2 text-xs leading-5 text-charcoal/48">Use para criar um novo ponto de passagem no quadro.</p>
+                </div>
+                <button type="button" class="stage-action-btn" data-modal-close>
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+            </div>
+
+            <form id="stage-create-form" class="mt-5 grid gap-3">
+                <input id="stage-name-input" type="text" name="nome" class="input-shell rounded-2xl px-4 py-3 text-sm font-semibold outline-none" placeholder="Ex.: Validação técnica">
+                <button type="submit" class="btn-soft inline-flex items-center justify-center gap-2 rounded-2xl bg-charcoal px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white hover:bg-secondary">
+                    <i data-lucide="columns-3-cog" class="h-4 w-4"></i>
+                    Criar coluna
+                </button>
+                <p data-stage-feedback class="min-h-[1.25rem] text-xs font-semibold text-charcoal/55"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="rename-stage-modal" class="dashboard-modal" aria-hidden="true">
+        <div class="absolute inset-0 bg-charcoal/45 backdrop-blur-sm" data-modal-close></div>
+        <div class="dashboard-modal-panel relative z-10 w-full max-w-md rounded-[28px] border border-white/60 bg-white p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.45)]">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-secondary">Renomear</p>
+                    <h4 class="mt-2 text-xl font-black text-charcoal">Editar nome da coluna</h4>
+                </div>
+                <button type="button" class="stage-action-btn" data-modal-close>
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+            </div>
+
+            <form id="stage-rename-form" class="mt-5 grid gap-3">
+                <select id="stage-rename-select" class="input-shell rounded-2xl px-4 py-3 text-sm font-semibold outline-none">
+                    {% for etapa in etapas_pipeline %}
+                    <option value="{{ etapa.chave }}">{{ etapa.nome }}</option>
+                    {% endfor %}
+                </select>
+                <input id="stage-rename-input" type="text" class="input-shell rounded-2xl px-4 py-3 text-sm font-semibold outline-none" placeholder="Novo nome da etapa">
+                <button type="submit" class="btn-soft inline-flex items-center justify-center gap-2 rounded-2xl border border-soft bg-white px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-charcoal hover:bg-soft/70">
+                    <i data-lucide="pencil-line" class="h-4 w-4"></i>
+                    Salvar
+                </button>
+                <p data-stage-feedback class="min-h-[1.25rem] text-xs font-semibold text-charcoal/55"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="delete-stage-modal" class="dashboard-modal" aria-hidden="true">
+        <div class="absolute inset-0 bg-charcoal/45 backdrop-blur-sm" data-modal-close></div>
+        <div class="dashboard-modal-panel relative z-10 w-full max-w-md rounded-[28px] border border-white/60 bg-white p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.45)]">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-red-600">Excluir</p>
+                    <h4 class="mt-2 text-xl font-black text-charcoal">Remover coluna</h4>
+                    <p class="mt-2 text-xs leading-5 text-charcoal/48">Os leads da coluna escolhida serão enviados para outra etapa.</p>
+                </div>
+                <button type="button" class="stage-action-btn" data-modal-close>
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+            </div>
+
+            <form id="stage-delete-form" class="mt-5 grid gap-3">
+                <select id="stage-delete-select" class="input-shell rounded-2xl px-4 py-3 text-sm font-semibold outline-none">
+                    {% for etapa in etapas_pipeline %}
+                    <option value="{{ etapa.chave }}">{{ etapa.nome }}</option>
+                    {% endfor %}
+                </select>
+                <select id="stage-delete-destination" class="input-shell rounded-2xl px-4 py-3 text-sm font-semibold outline-none">
+                    {% for etapa in etapas_pipeline %}
+                    <option value="{{ etapa.chave }}">Mover leads para: {{ etapa.nome }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn-soft inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-red-700 hover:bg-red-100">
+                    <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                    Revisar exclusão
+                </button>
+                <p data-stage-feedback class="min-h-[1.25rem] text-xs font-semibold text-charcoal/55"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-delete-stage-modal" class="dashboard-modal" aria-hidden="true">
+        <div class="absolute inset-0 bg-charcoal/50 backdrop-blur-sm" data-modal-close></div>
+        <div class="dashboard-modal-panel relative z-10 w-full max-w-md rounded-[28px] border border-white/60 bg-white p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.45)]">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-red-600">Confirmação</p>
+                    <h4 class="mt-2 text-xl font-black text-charcoal">Confirmar exclusão</h4>
+                </div>
+                <button type="button" class="stage-action-btn" data-modal-close>
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+            </div>
+
+            <div class="mt-5 rounded-[22px] border border-red-100 bg-red-50/80 p-4">
+                <p class="text-sm font-semibold leading-6 text-charcoal">
+                    A etapa <strong id="confirm-delete-stage-name" class="text-red-700">-</strong> será removida.
+                </p>
+                <p class="mt-2 text-sm leading-6 text-charcoal/75">
+                    Todos os leads serão movidos para <strong id="confirm-delete-destination-name" class="text-secondary">-</strong> antes da exclusão.
+                </p>
+            </div>
+
+            <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button type="button" class="btn-soft inline-flex items-center justify-center gap-2 rounded-2xl border border-soft bg-white px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-charcoal hover:bg-soft/70" data-modal-close>
+                    Cancelar
+                </button>
+                <button type="button" id="confirm-delete-stage-submit" class="btn-soft inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-red-700 hover:bg-red-100">
+                    <i data-lucide="trash-2" class="h-4 w-4"></i>
+                    Excluir etapa
+                </button>
+            </div>
+
+            <p data-stage-feedback class="mt-4 min-h-[1.25rem] text-xs font-semibold text-charcoal/55"></p>
+        </div>
+    </div>
+
+
+
+    <div class="flex-1 overflow-x-auto pb-4">
+
+        <div id="pipeline-stage-list" class="flex gap-4 min-w-max h-full">
+
+           
+
+            {% for estagio in estagios %}
+
+            <div class="kanban-stage w-[320px] flex flex-col h-full select-none" data-stage-key="{{ estagio.chave }}">
+
+               
+
+                <div class="flex items-center justify-between mb-2 px-1 gap-2">
+
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="stage-order-pill" data-stage-order>{{ forloop.counter }}</span>
+                        <button type="button" class="stage-handle" title="Arraste para reordenar a coluna">
+                            <i data-lucide="grip-vertical" class="h-4 w-4"></i>
+                        </button>
+
+                    <h3 class="font-bold text-charcoal text-xs uppercase flex items-center gap-2 min-w-0">
+
+                        <span class="stage-dot" data-stage-dot></span>
+
+                        {{ estagio.nome }}
+
+                    </h3>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <span id="contador-{{ estagio.chave }}" class="stage-count-pill px-2 py-0.5 rounded text-[10px] font-bold">
+                            {{ estagio.qtd }}
+                        </span>
+                        <button type="button" class="stage-action-btn" data-modal-open="rename-stage-modal" data-stage-key="{{ estagio.chave }}" data-stage-name="{{ estagio.nome }}" title="Renomear etapa">
+                            <i data-lucide="pencil-line" class="h-3.5 w-3.5"></i>
+                        </button>
+                        <button type="button" class="stage-action-btn" data-modal-open="delete-stage-modal" data-stage-key="{{ estagio.chave }}" data-stage-name="{{ estagio.nome }}" title="Excluir etapa">
+                            <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+
+
+                <div id="col-{{ estagio.chave }}" data-stage="{{ estagio.chave }}" class="kanban-col flex-1 bg-white/75 rounded-[24px] p-3 border border-soft overflow-y-auto custom-scrollbar space-y-3 min-h-[150px] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+
+                   
+
+                    {% for lead in estagio.leads %}
+
+                        <div data-id="{{ lead.id }}" class="kanban-card p-3 rounded-2xl shadow-sm border border-soft group
+
+                            {% if lead.servico == 'solar' %}card-solar
+
+                            {% elif lead.servico == 'climatizacao' %}card-clima
+
+                            {% elif lead.servico == 'eletrica' %}card-eletrica
+
+                            {% elif lead.servico == 'automacao' %}card-automacao
+
+                            {% else %}card-geral{% endif %}">
+
+                           
+
+
+                            <!-- Botão deletar Lead -->
+                            <form method="post" action="{% url 'crm:deletar_lead' lead.id %}" class="absolute top-2 right-2 z-20" style="pointer-events: auto;" onsubmit="return confirm('Tem certeza que deseja deletar este Lead?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-soft bg-charcoal/8 hover:bg-charcoal/14 text-charcoal rounded-full p-1 shadow-sm border border-soft transition" title="Deletar Lead">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </form>
+
+                            <a href="{% url 'crm:lead_detail' lead.id %}" class="absolute inset-0 z-0"></a>
+
+                           
+
+                            <div class="relative z-10 pointer-events-none kanban-card-body">
+
+                                <div class="flex justify-between items-start mb-2">
+
+                                    <div class="flex flex-wrap gap-1 max-w-[78%]">
+
+                                        <span class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded
+
+                                            {% if lead.servico == 'solar' %}bg-solar
+
+                                            {% elif lead.servico == 'climatizacao' %}bg-clima
+
+                                            {% elif lead.servico == 'eletrica' %}bg-eletrica
+
+                                            {% elif lead.servico == 'automacao' %}bg-automacao
+
+                                            {% else %}bg-geral{% endif %}">
+
+                                            {{ lead.servico|default:'geral'|title }}
+
+                                        </span>
+
+                                       
+
+                                        <span class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded flex items-center gap-1
+
+                                            {% if lead.origem == 'instagram' %}tag-insta
+
+                                            {% elif lead.origem == 'site' or lead.origem == 'google' %}tag-google
+
+                                            {% elif lead.origem == 'indicacao' %}tag-indicacao
+
+                                            {% else %}tag-outros{% endif %}">
+
+                                           
+
+                                            {% if lead.origem == 'instagram' %}<i data-lucide="camera" class="w-2.5 h-2.5"></i>
+
+                                            {% elif lead.origem == 'site' or lead.origem == 'google' %}<i data-lucide="globe" class="w-2.5 h-2.5"></i>
+
+                                            {% elif lead.origem == 'indicacao' %}<i data-lucide="users" class="w-2.5 h-2.5"></i>
+
+                                            {% else %}<i data-lucide="link" class="w-2.5 h-2.5"></i>{% endif %}
+
+                                           
+
+                                            {{ lead.get_origem_display|default:lead.origem }}
+
+                                        </span>
+
+                                    </div>
+
+
+
+                                    <span class="text-[9px] text-charcoal/40 font-medium whitespace-nowrap" title="Data de entrada">
+
+                                        {{ lead.data_criacao|date:"d/m" }}
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <div class="mt-1 min-w-0">
+
+                                    <h4 class="kanban-card-title font-bold text-charcoal text-sm leading-snug mb-1 group-hover:text-secondary transition-colors">
+
+                                        {{ lead.nome_razao }}
+
+                                    </h4>
+
+                                    {% if lead.valor > 0 %}
+
+                                    <p class="text-xs font-bold text-secondary">R$ {{ lead.valor|floatformat:0 }}</p>
+
+                                    {% endif %}
+
+                                </div>
+
+
+
+                                <div class="kanban-card-meta">
+
+                                    {% if lead.cidade %}
+
+                                    <div class="kanban-card-meta-item">
+
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-charcoal/40 shrink-0 mt-[1px]"></i>
+
+                                        <span>{{ lead.cidade }}{% if lead.estado %}/{{ lead.estado }}{% endif %}</span>
+
+                                    </div>
+
+                                    {% endif %}
+
+                                    {% if lead.whatsapp %}
+
+                                    <div class="kanban-card-meta-item">
+
+                                        <i data-lucide="phone" class="w-3.5 h-3.5 text-charcoal/40 shrink-0 mt-[1px]"></i>
+
+                                        <span>{{ lead.whatsapp }}</span>
+
+                                    </div>
+
+                                    {% elif lead.email %}
+
+                                    <div class="kanban-card-meta-item">
+
+                                        <i data-lucide="mail" class="w-3.5 h-3.5 text-charcoal/40 shrink-0 mt-[1px]"></i>
+
+                                        <span>{{ lead.email }}</span>
+
+                                    </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="kanban-history">
+
+                                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45 mb-2">Histórico</p>
+
+                                    <div class="kanban-history-list">
+
+                                        {% for historico in lead.historicos_recentes_card %}
+
+                                        <div class="kanban-history-item">
+
+                                            <div class="mt-0.5 w-5 h-5 rounded-full bg-soft/55 flex items-center justify-center text-charcoal/45 shrink-0">
+
+                                                {% if historico.tipo == 'ligacao' %}<i data-lucide="phone" class="w-3 h-3"></i>
+
+                                                {% elif historico.tipo == 'whatsapp' %}<i data-lucide="message-circle" class="w-3 h-3"></i>
+
+                                                {% elif historico.tipo == 'movimentacao' %}<i data-lucide="move-right" class="w-3 h-3"></i>
+
+                                                {% else %}<i data-lucide="clock-3" class="w-3 h-3"></i>{% endif %}
+
+                                            </div>
+
+                                            <div class="kanban-history-copy">
+
+                                                <p class="kanban-history-note">{{ historico.nota }}</p>
+
+                                                <p class="kanban-history-date">{{ historico.data|date:"d/m H:i" }}</p>
+
+                                            </div>
+
+                                        </div>
+
+                                        {% empty %}
+
+                                        <div class="kanban-history-item">
+
+                                            <div class="mt-0.5 w-5 h-5 rounded-full bg-soft/55 flex items-center justify-center text-charcoal/45 shrink-0">
+
+                                                <i data-lucide="clock-3" class="w-3 h-3"></i>
+
+                                            </div>
+
+                                            <div class="kanban-history-copy">
+
+                                                <p class="kanban-history-note">Sem histórico recente.</p>
+
+                                            </div>
+
+                                        </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% empty %}
+
+                        <div class="stage-empty">
+                            Arraste leads para cá.
+                        </div>
+
+                    {% endfor %}
+
+
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const csrfToken = '{{ csrf_token }}';
+        const stageList = document.getElementById('pipeline-stage-list');
+        const stageCreateForm = document.getElementById('stage-create-form');
+        const stageNameInput = document.getElementById('stage-name-input');
+        const stageRenameForm = document.getElementById('stage-rename-form');
+        const stageRenameSelect = document.getElementById('stage-rename-select');
+        const stageRenameInput = document.getElementById('stage-rename-input');
+        const stageDeleteForm = document.getElementById('stage-delete-form');
+        const stageDeleteSelect = document.getElementById('stage-delete-select');
+        const stageDeleteDestination = document.getElementById('stage-delete-destination');
+        const confirmDeleteStageName = document.getElementById('confirm-delete-stage-name');
+        const confirmDeleteDestinationName = document.getElementById('confirm-delete-destination-name');
+        const confirmDeleteStageSubmit = document.getElementById('confirm-delete-stage-submit');
+        const stageFeedbackTargets = document.querySelectorAll('[data-stage-feedback]');
+        const modalOpenButtons = document.querySelectorAll('[data-modal-open]');
+        const modalCloseButtons = document.querySelectorAll('[data-modal-close]');
+        const stagePalettes = [
+            { solid: '#ff6b6b', soft: 'rgba(255, 107, 107, 0.14)', muted: 'rgba(255, 107, 107, 0.07)', border: 'rgba(255, 107, 107, 0.14)' },
+            { solid: '#f59e0b', soft: 'rgba(245, 158, 11, 0.14)', muted: 'rgba(245, 158, 11, 0.07)', border: 'rgba(245, 158, 11, 0.14)' },
+            { solid: '#10b981', soft: 'rgba(16, 185, 129, 0.14)', muted: 'rgba(16, 185, 129, 0.07)', border: 'rgba(16, 185, 129, 0.14)' },
+            { solid: '#06b6d4', soft: 'rgba(6, 182, 212, 0.14)', muted: 'rgba(6, 182, 212, 0.07)', border: 'rgba(6, 182, 212, 0.14)' },
+            { solid: '#3b82f6', soft: 'rgba(59, 130, 246, 0.14)', muted: 'rgba(59, 130, 246, 0.07)', border: 'rgba(59, 130, 246, 0.14)' },
+            { solid: '#8b5cf6', soft: 'rgba(139, 92, 246, 0.14)', muted: 'rgba(139, 92, 246, 0.07)', border: 'rgba(139, 92, 246, 0.14)' },
+            { solid: '#ec4899', soft: 'rgba(236, 72, 153, 0.14)', muted: 'rgba(236, 72, 153, 0.07)', border: 'rgba(236, 72, 153, 0.14)' },
+            { solid: '#84cc16', soft: 'rgba(132, 204, 22, 0.14)', muted: 'rgba(132, 204, 22, 0.07)', border: 'rgba(132, 204, 22, 0.14)' },
+            { solid: '#f97316', soft: 'rgba(249, 115, 22, 0.14)', muted: 'rgba(249, 115, 22, 0.07)', border: 'rgba(249, 115, 22, 0.14)' },
+        ];
+        let activeModal = null;
+        let pendingDeleteStage = null;
+
+        function hashStageKey(value) {
+            return Array.from(value || '').reduce(function (accumulator, character) {
+                return accumulator + character.charCodeAt(0);
+            }, 0);
+        }
+
+        function refreshStageVisuals() {
+            if (!stageList) return;
+
+            Array.from(stageList.querySelectorAll('.kanban-stage')).forEach(function (stageElement, index) {
+                const stageKey = stageElement.getAttribute('data-stage-key') || '';
+                const palette = stagePalettes[(hashStageKey(stageKey) + index) % stagePalettes.length];
+                const orderBadge = stageElement.querySelector('[data-stage-order]');
+                const countBadge = stageElement.querySelector('.stage-count-pill');
+
+                stageElement.style.setProperty('--stage-color', palette.solid);
+                stageElement.style.setProperty('--stage-soft-color', palette.soft);
+
+                if (orderBadge) {
+                    orderBadge.textContent = String(index + 1).padStart(2, '0');
+                    orderBadge.style.background = palette.muted;
+                    orderBadge.style.borderColor = palette.border;
+                    orderBadge.style.color = 'rgba(36, 36, 36, 0.68)';
+                }
+
+                if (countBadge) {
+                    countBadge.style.background = palette.muted;
+                    countBadge.style.borderColor = palette.border;
+                    countBadge.style.color = 'rgba(36, 36, 36, 0.72)';
+                }
+            });
+        }
+
+        function updateStageFeedback(message, isError) {
+            stageFeedbackTargets.forEach(function (target) {
+                target.textContent = message;
+                target.className = isError
+                    ? 'min-h-[1.25rem] text-xs font-semibold text-red-600'
+                    : 'min-h-[1.25rem] text-xs font-semibold text-secondary';
+            });
+        }
+
+        function clearStageFeedback() {
+            stageFeedbackTargets.forEach(function (target) {
+                target.textContent = '';
+                target.className = 'min-h-[1.25rem] text-xs font-semibold text-charcoal/55';
+            });
+        }
+
+        function closeActiveModal() {
+            if (!activeModal) return;
+            activeModal.classList.remove('is-open');
+            activeModal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('overflow-hidden');
+            activeModal = null;
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            clearStageFeedback();
+            modal.classList.add('is-open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('overflow-hidden');
+            activeModal = modal;
+        }
+
+        function setStageSelection(stageKey, stageName) {
+            if (stageRenameSelect && stageKey) {
+                stageRenameSelect.value = stageKey;
+            }
+            if (stageRenameInput) {
+                stageRenameInput.value = stageName || '';
+            }
+            if (stageDeleteSelect && stageKey) {
+                stageDeleteSelect.value = stageKey;
+                syncDeleteDestinations();
+            }
+        }
+
+        function getSelectedOptionText(selectElement) {
+            const selectedOption = selectElement && selectElement.options[selectElement.selectedIndex];
+            return selectedOption ? selectedOption.text : '';
+        }
+
+        async function submitStageDeletion() {
+            if (!pendingDeleteStage || !confirmDeleteStageSubmit) {
+                return;
+            }
+
+            const previousButtonMarkup = confirmDeleteStageSubmit.innerHTML;
+            confirmDeleteStageSubmit.disabled = true;
+            confirmDeleteStageSubmit.innerHTML = '<span class="animate-pulse">Excluindo...</span>';
+
+            try {
+                const response = await fetch("{% url 'crm:api_excluir_estagio' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify(pendingDeleteStage),
+                });
+
+                const payload = await response.json();
+                if (!response.ok || payload.status !== 'ok') {
+                    throw new Error(payload.message || 'Não foi possível excluir a etapa.');
+                }
+
+                updateStageFeedback(`Etapa removida com ${payload.moved_leads} lead(s) realocado(s) para "${payload.destination_stage_name}". Atualizando o quadro...`, false);
+                window.location.reload();
+            } catch (error) {
+                updateStageFeedback(error.message || 'Erro ao excluir a etapa.', true);
+            } finally {
+                confirmDeleteStageSubmit.disabled = false;
+                confirmDeleteStageSubmit.innerHTML = previousButtonMarkup;
+            }
+        }
+
+        function syncDeleteDestinations() {
+            if (!stageDeleteSelect || !stageDeleteDestination) return;
+            const selectedStage = stageDeleteSelect.value;
+            Array.from(stageDeleteDestination.options).forEach(function (option) {
+                option.hidden = option.value === selectedStage;
+                option.disabled = option.value === selectedStage;
+            });
+
+            const firstAvailable = Array.from(stageDeleteDestination.options).find(function (option) {
+                return !option.disabled;
+            });
+
+            if (firstAvailable) {
+                stageDeleteDestination.value = firstAvailable.value;
+            }
+        }
+
+        modalOpenButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                const modalId = button.getAttribute('data-modal-open');
+                const stageKey = button.getAttribute('data-stage-key');
+                const stageName = button.getAttribute('data-stage-name');
+                if (stageKey) {
+                    setStageSelection(stageKey, stageName);
+                }
+                openModal(modalId);
+            });
+        });
+
+        modalCloseButtons.forEach(function (button) {
+            button.addEventListener('click', closeActiveModal);
+        });
+
+        refreshStageVisuals();
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeActiveModal();
+            }
+        });
+
+       
+
+        // --- 1. CONFIGURAÇÃO DRAG & DROP ---
+
+        const columns = document.querySelectorAll('.kanban-col');
+
+        if (stageList) {
+            new Sortable(stageList, {
+                animation: 180,
+                draggable: '.kanban-stage',
+                handle: '.stage-handle',
+
+                onEnd: async function () {
+                    const stageKeys = Array.from(stageList.querySelectorAll('.kanban-stage')).map(function (item) {
+                        return item.getAttribute('data-stage-key');
+                    });
+
+                    refreshStageVisuals();
+
+                    try {
+                        const response = await fetch("{% url 'crm:api_reordenar_estagios' %}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: JSON.stringify({ stage_keys: stageKeys }),
+                        });
+
+                        const payload = await response.json();
+                        if (!response.ok || payload.status !== 'ok') {
+                            throw new Error(payload.message || 'Não foi possível reordenar as etapas.');
+                        }
+
+                        updateStageFeedback('Ordem das etapas atualizada com sucesso.', false);
+                    } catch (error) {
+                        updateStageFeedback(error.message || 'Erro ao reordenar as etapas.', true);
+                    }
+                }
+            });
+        }
+
+        if (stageCreateForm && stageNameInput) {
+            stageCreateForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const nome = stageNameInput.value.trim();
+                if (nome.length < 3) {
+                    updateStageFeedback('Digite pelo menos 3 caracteres para criar uma nova etapa.', true);
+                    stageNameInput.focus();
+                    return;
+                }
+
+                const submitButton = stageCreateForm.querySelector('button[type="submit"]');
+                const previousButtonMarkup = submitButton.innerHTML;
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="animate-pulse">Criando...</span>';
+
+                try {
+                    const response = await fetch("{% url 'crm:api_criar_estagio' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                        body: JSON.stringify({ nome: nome }),
+                    });
+
+                    const payload = await response.json();
+                    if (!response.ok || payload.status !== 'ok') {
+                        throw new Error(payload.message || 'Não foi possível criar a etapa.');
+                    }
+
+                    updateStageFeedback(`Etapa "${payload.stage.nome}" criada. Atualizando o quadro...`, false);
+                    window.location.reload();
+                } catch (error) {
+                    updateStageFeedback(error.message || 'Erro ao criar a etapa.', true);
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = previousButtonMarkup;
+                }
+            });
+        }
+
+        if (stageRenameForm && stageRenameSelect && stageRenameInput) {
+            stageRenameForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const stageKey = stageRenameSelect.value;
+                const nome = stageRenameInput.value.trim();
+                if (nome.length < 3) {
+                    updateStageFeedback('Digite pelo menos 3 caracteres para renomear a etapa.', true);
+                    stageRenameInput.focus();
+                    return;
+                }
+
+                const submitButton = stageRenameForm.querySelector('button[type="submit"]');
+                const previousButtonMarkup = submitButton.innerHTML;
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="animate-pulse">Salvando...</span>';
+
+                try {
+                    const response = await fetch("{% url 'crm:api_renomear_estagio' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                        body: JSON.stringify({ stage_key: stageKey, nome: nome }),
+                    });
+
+                    const payload = await response.json();
+                    if (!response.ok || payload.status !== 'ok') {
+                        throw new Error(payload.message || 'Não foi possível renomear a etapa.');
+                    }
+
+                    updateStageFeedback(`Etapa renomeada para "${payload.stage.nome}". Atualizando o quadro...`, false);
+                    window.location.reload();
+                } catch (error) {
+                    updateStageFeedback(error.message || 'Erro ao renomear a etapa.', true);
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = previousButtonMarkup;
+                }
+            });
+        }
+
+        if (stageDeleteSelect && stageDeleteDestination) {
+            syncDeleteDestinations();
+            stageDeleteSelect.addEventListener('change', syncDeleteDestinations);
+        }
+
+        if (stageRenameSelect && stageRenameInput) {
+            stageRenameSelect.addEventListener('change', function () {
+                const selectedOption = stageRenameSelect.options[stageRenameSelect.selectedIndex];
+                if (selectedOption) {
+                    stageRenameInput.value = selectedOption.text;
+                }
+            });
+        }
+
+        if (stageDeleteForm && stageDeleteSelect && stageDeleteDestination) {
+            stageDeleteForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const stageKey = stageDeleteSelect.value;
+                const destinationStageKey = stageDeleteDestination.value;
+                if (!destinationStageKey || destinationStageKey === stageKey) {
+                    updateStageFeedback('Escolha uma etapa de destino válida para realocar os leads.', true);
+                    return;
+                }
+
+                const selectedLabel = getSelectedOptionText(stageDeleteSelect) || 'esta etapa';
+                const destinationLabel = (getSelectedOptionText(stageDeleteDestination) || 'outra etapa').replace('Mover leads para: ', '');
+
+                pendingDeleteStage = { stage_key: stageKey, destination_stage_key: destinationStageKey };
+
+                if (confirmDeleteStageName) {
+                    confirmDeleteStageName.textContent = selectedLabel;
+                }
+                if (confirmDeleteDestinationName) {
+                    confirmDeleteDestinationName.textContent = destinationLabel;
+                }
+
+                openModal('confirm-delete-stage-modal');
+            });
+        }
+
+        if (confirmDeleteStageSubmit) {
+            confirmDeleteStageSubmit.addEventListener('click', submitStageDeletion);
+        }
+
+       
+
+        columns.forEach(column => {
+
+            new Sortable(column, {
+
+                group: 'kanban_group',
+
+                animation: 150,
+
+                ghostClass: 'sortable-ghost',
+
+                delay: 50,
+
+                delayOnTouchOnly: true,
+
+
+
+                onEnd: function (evt) {
+
+                    const itemEl = evt.item;
+
+                    const originCol = evt.from;
+
+                    const targetCol = evt.to;
+
+
+
+                    if (originCol === targetCol) return;
+
+
+
+                    const leadId = itemEl.getAttribute('data-id');
+
+                    const novoEstagio = targetCol.getAttribute('data-stage');
+
+                    const velhoEstagio = originCol.getAttribute('data-stage');
+
+
+
+                    console.log(`Movendo Lead ${leadId} para ${novoEstagio}`);
+
+
+
+                    const cv = document.getElementById('contador-' + velhoEstagio);
+
+                    const cn = document.getElementById('contador-' + novoEstagio);
+
+                    if (cv) cv.innerText = Math.max(0, parseInt(cv.innerText) - 1);
+
+                    if (cn) cn.innerText = parseInt(cn.innerText) + 1;
+
+
+
+                    fetch("{% url 'crm:api_mover_lead' %}", {
+
+                        method: 'POST',
+
+                        headers: {
+
+                            'Content-Type': 'application/json',
+
+                            'X-CSRFToken': csrfToken
+
+                        },
+
+                        body: JSON.stringify({ lead_id: leadId, novo_estagio: novoEstagio })
+
+                    })
+
+                    .then(r => { if(r.ok) console.log('Salvo!'); else console.error('Erro'); })
+
+                    .catch(err => console.error(err));
+
+                }
+
+            });
+
+        });
+
+
+
+        // --- 2. CONFIGURAÇÃO GRÁFICO ---
+
+        {% if donut_series %}
+
+            var dadosSeries = JSON.parse('{{ donut_series|safe }}');
+
+            var dadosLabels = JSON.parse('{{ donut_labels|safe }}');
+
+        {% else %}
+
+            var dadosSeries = []; var dadosLabels = [];
+
+        {% endif %}
+
+
+
+        var options = {
+
+            series: dadosSeries,
+
+            labels: dadosLabels,
+
+            chart: { type: 'donut', width: 160, height: 160, parentHeightOffset: 0 },
+
+            colors: ['#68ae5c', '#89cdc4', '#8bc269', '#242424'],
+
+            stroke: { width: 0 },
+
+            dataLabels: { enabled: false },
+
+            legend: { show: false },
+
+            tooltip: { enabled: true, y: { formatter: function(val) { return val + " leads"; } } },
+
+            plotOptions: { pie: { donut: { size: '72%', labels: { show: false } } } }
+
+        };
+
+       
+
+        if (dadosSeries.reduce((a, b) => a + b, 0) > 0) {
+
+            var chart = new ApexCharts(document.querySelector("#chart-origem"), options);
+
+            chart.render();
+
+        } else {
+
+            document.querySelector("#chart-origem").innerHTML = "<div class='h-full flex items-center justify-center text-[10px] text-charcoal/45'>Sem dados</div>";
+
+        }
+
+       
+
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    });
+
+</script>
+
+{% endblock %}
