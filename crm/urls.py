@@ -16,6 +16,7 @@ def redirect_system_home(request):
 urlpatterns = [
     path('', redirect_system_home, name='system_home'),
     path('crm/pipeline/', views.crm_dashboard_view, name='crm_dashboard'),
+    path('crm/api/public/leads/', views.api_public_create_lead, name='api_public_create_lead'),
     path('crm/api/mover-lead/', views.api_mover_lead, name='api_mover_lead'),
     path('crm/api/criar-estagio/', views.api_criar_estagio, name='api_criar_estagio'),
     path('crm/api/reordenar-estagios/', views.api_reordenar_estagios, name='api_reordenar_estagios'),

@@ -7,8 +7,18 @@ from django.db import transaction
 from django.db.models import Max, Prefetch, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Historico, Lead, PipelineStage
+
+
+PUBLIC_LEAD_ALLOWED_ORIGINS = {
+    'https://laudos.forcaeng.com.br',
+    'https://forcaeng.com.br',
+    'https://www.forcaeng.com.br',
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
+}
 
 
 def parse_money_br(raw_value):
@@ -24,6 +34,95 @@ def parse_money_br(raw_value):
 
 def ensure_pipeline_stages():
     PipelineStage.bootstrap_defaults()
+
+
+def build_lead_observations(*, contact_name, company, description, page_url, referrer, utm_data):
+    notes = []
+    if contact_name:
+        notes.append(f'Contato: {contact_name}')
+    if company:
+        notes.append(f'Empresa: {company}')
+    if description:
+        notes.append(f'Descricao: {description}')
+    if page_url:
+        notes.append(f'Pagina: {page_url}')
+    if referrer:
+        notes.append(f'Referrer: {referrer}')
+
+    for label, value in utm_data:
+        if value:
+            notes.append(f'{label}: {value}')
+
+    return '\n'.join(notes)
+
+
+def map_service_choice(raw_service):
+    service = (raw_service or '').strip().lower()
+    service_map = {
+        'spda': 'spda',
+        'eletrico': 'eletrico',
+        'ambos': 'ambos',
+        'orcamento': 'orcamento',
+        'solar': 'solar',
+        'climatizacao': 'climatizacao',
+    }
+    return service_map.get(service, 'spda')
+
+
+def create_lead_from_payload(payload, *, actor='site'):
+    ensure_pipeline_stages()
+
+    contact_name = (payload.get('full_name') or payload.get('name') or '').strip()
+    company = (payload.get('company') or '').strip()
+    nome_razao = company or contact_name
+    if not nome_razao:
+        raise ValueError('Informe pelo menos o nome do contato ou da empresa.')
+
+    utm_data = [
+        ('utm_source', (payload.get('utm_source') or '').strip()),
+        ('utm_medium', (payload.get('utm_medium') or '').strip()),
+        ('utm_campaign', (payload.get('utm_campaign') or '').strip()),
+        ('utm_term', (payload.get('utm_term') or '').strip()),
+        ('utm_content', (payload.get('utm_content') or '').strip()),
+    ]
+    origem = (payload.get('origem') or payload.get('lead_source') or 'site').strip().lower()
+    if origem not in {choice[0] for choice in Lead.ORIGEM_CHOICES}:
+        origem = 'site'
+
+    lead = Lead.objects.create(
+        nome_razao=nome_razao,
+        whatsapp=(payload.get('whatsapp') or '').strip(),
+        email=(payload.get('email') or '').strip(),
+        servico=map_service_choice(payload.get('interest_service') or payload.get('servico')),
+        origem=origem,
+        valor=parse_money_br(payload.get('valor')),
+        observacoes=build_lead_observations(
+            contact_name=contact_name,
+            company=company,
+            description=(payload.get('description') or payload.get('descricao') or '').strip(),
+            page_url=(payload.get('page_url') or '').strip(),
+            referrer=(payload.get('referrer') or '').strip(),
+            utm_data=utm_data,
+        ),
+        estagio=PipelineStage.first_stage_key(),
+    )
+    Historico.objects.create(
+        lead=lead,
+        usuario=actor,
+        tipo='nota',
+        nota='Lead cadastrado via landing page.',
+    )
+    return lead
+
+
+def add_public_cors_headers(request, response):
+    origin = (request.headers.get('Origin') or '').rstrip('/')
+    if origin in PUBLIC_LEAD_ALLOWED_ORIGINS:
+        response['Access-Control-Allow-Origin'] = origin
+        response['Vary'] = 'Origin'
+    response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
 
 
 @login_required
@@ -285,6 +384,34 @@ def cadastrar_lead_view(request):
         return redirect('crm:crm_dashboard')
 
     return render(request, 'crm/lead_form.html')
+
+
+@csrf_exempt
+def api_public_create_lead(request):
+    if request.method == 'OPTIONS':
+        return add_public_cors_headers(request, JsonResponse({'status': 'ok'}))
+
+    if request.method != 'POST':
+        return add_public_cors_headers(request, JsonResponse({'status': 'error', 'message': 'Metodo nao permitido.'}, status=405))
+
+    try:
+        if request.content_type and 'application/json' in request.content_type:
+            payload = json.loads(request.body or '{}')
+        else:
+            payload = request.POST
+
+        lead = create_lead_from_payload(payload, actor='landing-page')
+        return add_public_cors_headers(
+            request,
+            JsonResponse({'status': 'ok', 'lead_id': lead.id, 'stage': lead.estagio}, status=201),
+        )
+    except ValueError as exc:
+        return add_public_cors_headers(request, JsonResponse({'status': 'error', 'message': str(exc)}, status=400))
+    except Exception:
+        return add_public_cors_headers(
+            request,
+            JsonResponse({'status': 'error', 'message': 'Falha ao cadastrar lead.'}, status=500),
+        )
 
 
 @login_required

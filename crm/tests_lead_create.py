@@ -1,4 +1,5 @@
 from decimal import Decimal
+import json
 
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
@@ -126,3 +127,35 @@ class LeadCreateViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Informe o nome ou razão social do lead.')
+
+    def test_public_lead_api_creates_lead_for_landing(self):
+        response = self.client.post(
+            reverse('crm:api_public_create_lead'),
+            {
+                'full_name': 'Miguel Bento',
+                'company': 'Forca Engenharia',
+                'whatsapp': '64999999999',
+                'interest_service': 'spda',
+                'lead_source': 'site',
+                'page_url': 'https://laudos.forcaeng.com.br/',
+                'referrer': 'google',
+                'utm_campaign': 'campanha-laudos',
+            },
+            HTTP_ORIGIN='https://laudos.forcaeng.com.br',
+        )
+
+        self.assertEqual(response.status_code, 201)
+        payload = json.loads(response.content)
+        lead = Lead.objects.get(id=payload['lead_id'])
+        self.assertEqual(lead.nome_razao, 'Forca Engenharia')
+        self.assertEqual(lead.whatsapp, '64999999999')
+        self.assertEqual(lead.servico, 'spda')
+        self.assertEqual(lead.origem, 'site')
+        self.assertIn('Contato: Miguel Bento', lead.observacoes)
+        self.assertEqual(response['Access-Control-Allow-Origin'], 'https://laudos.forcaeng.com.br')
+
+    def test_public_lead_api_rejects_missing_name_and_company(self):
+        response = self.client.post(reverse('crm:api_public_create_lead'), {'whatsapp': '64999999999'})
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Lead.objects.count(), 0)

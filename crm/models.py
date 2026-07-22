@@ -65,6 +65,10 @@ class PipelineStage(models.Model):
 
 class Lead(models.Model):
     SERVICO_CHOICES = [
+        ('spda', 'Laudo de SPDA'),
+        ('eletrico', 'Laudo de Instalacoes Eletricas'),
+        ('ambos', 'SPDA e Instalacoes Eletricas'),
+        ('orcamento', 'Solicitar Orcamento'),
         ('solar', 'Energia Solar'),
         ('climatizacao', 'Climatizacao'),
     ]
