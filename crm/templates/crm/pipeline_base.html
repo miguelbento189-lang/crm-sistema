@@ -12,11 +12,11 @@
       theme: {
         extend: {
             colors: {
-            primary: '#68ae5c',
-            accent: '#89cdc4',
-            secondary: '#4f8d46',
-            charcoal: '#1f1f1f',
-            soft: '#e0e0e0',
+            primary: '#f5f5f5',
+            accent: '#fecaca',
+            secondary: '#b91c1c',
+            charcoal: '#111111',
+            soft: '#d4d4d8',
           },
         },
       },
@@ -27,19 +27,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --crm-primary: #68ae5c;
-      --crm-accent: #89cdc4;
-      --crm-secondary: #4f8d46;
-      --crm-charcoal: #1f1f1f;
-      --crm-soft: #e0e0e0;
+      --crm-primary: #f5f5f5;
+      --crm-accent: #fecaca;
+      --crm-secondary: #b91c1c;
+      --crm-charcoal: #111111;
+      --crm-soft: #d4d4d8;
     }
 
     body {
       font-family: 'Inter', sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(137, 205, 196, 0.18), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(104, 174, 92, 0.14), transparent 30%),
-        linear-gradient(180deg, #f8f8f8 0%, #efefef 54%, #e7e7e7 100%);
+        radial-gradient(circle at top left, rgba(239, 68, 68, 0.08), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(127, 29, 29, 0.08), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, #f5f5f5 54%, #ececec 100%);
       color: var(--crm-charcoal);
     }
 
@@ -56,8 +56,8 @@
 
     .pipeline-sidebar {
       background:
-        radial-gradient(circle at top left, rgba(137, 205, 196, 0.2), transparent 28%),
-        linear-gradient(180deg, rgba(31, 31, 31, 0.99), rgba(31, 31, 31, 0.92) 35%, rgba(79, 141, 70, 0.96));
+        radial-gradient(circle at top left, rgba(254, 202, 202, 0.14), transparent 28%),
+        linear-gradient(180deg, rgba(17, 17, 17, 0.99), rgba(17, 17, 17, 0.94) 35%, rgba(127, 29, 29, 0.96));
       color: white;
       border-right: 1px solid rgba(221, 221, 221, 0.22);
       box-shadow: 0 28px 60px -34px rgba(31, 31, 31, 0.48);
@@ -70,22 +70,23 @@
     }
 
     .brand-mark {
-      width: 3rem;
-      height: 3rem;
+      width: 3.5rem;
+      height: 3.5rem;
       border-radius: 1rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(145deg, rgba(104, 174, 92, 0.24), rgba(137, 205, 196, 0.22));
+      background: linear-gradient(145deg, rgba(185, 28, 28, 0.2), rgba(254, 202, 202, 0.16));
       border: 1px solid rgba(255, 255, 255, 0.14);
       box-shadow: 0 14px 30px -20px rgba(0, 0, 0, 0.5);
       flex: 0 0 auto;
     }
 
-    .brand-mark svg {
-      width: 1.65rem;
-      height: 1.65rem;
-      color: white;
+    .brand-mark img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.28));
     }
 
     .pipeline-link {
@@ -103,21 +104,21 @@
     }
 
     .pipeline-link:hover {
-      background: rgba(137, 205, 196, 0.18);
-      border-color: rgba(137, 205, 196, 0.4);
+      background: rgba(254, 202, 202, 0.1);
+      border-color: rgba(248, 113, 113, 0.24);
       box-shadow: 0 18px 30px -26px rgba(0, 0, 0, 0.45);
       transform: translateY(-2px);
     }
 
     .pipeline-link.is-active {
-      background: rgba(139, 194, 105, 0.22);
-      border-color: rgba(139, 194, 105, 0.55);
-      box-shadow: inset 0 0 0 1px rgba(137, 205, 196, 0.22);
+      background: rgba(185, 28, 28, 0.18);
+      border-color: rgba(248, 113, 113, 0.28);
+      box-shadow: inset 0 0 0 1px rgba(254, 202, 202, 0.14);
     }
 
     .message-card {
       border-radius: 1rem;
-      border: 1px solid rgba(137, 205, 196, 0.35);
+      border: 1px solid rgba(248, 113, 113, 0.22);
       background: rgba(255, 255, 255, 0.9);
       padding: 0.9rem 1rem;
       box-shadow: 0 18px 40px -32px rgba(36, 36, 36, 0.22);
@@ -132,7 +133,7 @@
     }
 
     .panel-surface:hover {
-      border-color: rgba(137, 205, 196, 0.5);
+      border-color: rgba(248, 113, 113, 0.22);
       box-shadow: 0 28px 70px -46px rgba(36, 36, 36, 0.28);
       transform: translateY(-2px);
     }
@@ -146,13 +147,13 @@
     }
 
     .input-shell:hover {
-      border-color: rgba(137, 205, 196, 0.58);
+      border-color: rgba(248, 113, 113, 0.32);
       background: white;
     }
 
     .input-shell:focus {
-      border-color: rgba(104, 174, 92, 0.82);
-      box-shadow: 0 0 0 4px rgba(137, 205, 196, 0.18);
+      border-color: rgba(185, 28, 28, 0.78);
+      box-shadow: 0 0 0 4px rgba(254, 202, 202, 0.22);
       background: white;
       transform: translateY(-1px);
     }
@@ -206,17 +207,14 @@
         <div>
           <div class="brand-lockup">
             <div class="brand-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 19V5l7 4 7-4v14l-7-4-7 4Z" />
-                <path d="M12 9.5v10" />
-              </svg>
+              <img src="https://www.forcaeng.com.br/images/logo.png" alt="Força Engenharia">
             </div>
             <div>
               <p class="text-[11px] font-black uppercase tracking-[0.32em] text-white/72">Força Engenharia</p>
               <h1 class="mt-1 text-3xl font-black text-white">CRM Comercial</h1>
             </div>
           </div>
-          <p class="mt-4 max-w-xs text-sm leading-6 text-white/82">Ambiente dedicado para captação, qualificação e acompanhamento dos leads, com a mesma linguagem visual da landing page.</p>
+          <p class="mt-4 max-w-xs text-sm leading-6 text-white/72">Captação e acompanhamento de leads.</p>
         </div>
 
         <nav class="grid gap-3">
@@ -232,7 +230,7 @@
 
         <div class="mt-auto rounded-[1.75rem] border border-white/12 bg-white/10 p-5 backdrop-blur">
           <div class="flex items-center gap-3">
-            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[rgba(137,205,196,0.22)] text-sm font-black uppercase text-white">
+            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[rgba(185,28,28,0.24)] text-sm font-black uppercase text-white">
               {{ user.username|default:'CRM'|slice:':2' }}
             </div>
             <div class="min-w-0">
@@ -242,7 +240,7 @@
           </div>
           <form action="{% url 'product_logout' %}" method="post" class="mt-4">
             {% csrf_token %}
-            <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/16 bg-white/10 px-4 py-3 text-xs font-black uppercase tracking-[0.22em] text-white transition hover:bg-[rgba(137,205,196,0.18)]">
+            <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/16 bg-white/10 px-4 py-3 text-xs font-black uppercase tracking-[0.22em] text-white transition hover:bg-[rgba(185,28,28,0.18)]">
               <i data-lucide="log-out" class="h-4 w-4"></i>
               Sair
             </button>
@@ -257,18 +255,15 @@
           <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div class="flex items-center gap-4">
               <div class="brand-mark text-charcoal" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 19V5l7 4 7-4v14l-7-4-7 4Z" />
-                  <path d="M12 9.5v10" />
-                </svg>
+                <img src="https://www.forcaeng.com.br/images/logo.png" alt="Força Engenharia">
               </div>
               <div>
-                <p class="text-[11px] font-black uppercase tracking-[0.28em] text-secondary">Modulo ativo</p>
+                <p class="text-[11px] font-black uppercase tracking-[0.28em] text-secondary">Painel</p>
                 <h2 class="mt-2 text-2xl font-black text-charcoal">{% block header_title %}CRM Pipeline{% endblock %}</h2>
               </div>
             </div>
-            <div class="hidden rounded-full border border-primary/25 bg-[rgba(104,174,92,0.08)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-secondary md:inline-flex">
-              Identidade alinhada com a landing
+            <div class="hidden rounded-full border border-red-200 bg-red-50 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-secondary md:inline-flex">
+              Força Engenharia
             </div>
           </div>
         </div>
@@ -278,7 +273,7 @@
         {% if messages %}
           <div class="mb-6 grid gap-3">
             {% for message in messages %}
-              <div class="message-card text-sm font-semibold {% if message.tags == 'error' %}border-red-200 text-red-700{% elif message.tags == 'success' %}border-primary/50 text-secondary{% else %}text-charcoal/80{% endif %}">
+              <div class="message-card text-sm font-semibold {% if message.tags == 'error' %}border-red-200 text-red-700{% elif message.tags == 'success' %}border-red-200 text-secondary{% else %}text-charcoal/80{% endif %}">
                 {{ message }}
               </div>
             {% endfor %}

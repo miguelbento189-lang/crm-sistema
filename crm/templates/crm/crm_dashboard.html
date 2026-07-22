@@ -20,11 +20,11 @@
 
     /* --- BORDAS LATERAIS (Serviços) --- */
 
-    .card-solar { border-left: 4px solid #8bc269 !important; }
+    .card-solar { border-left: 4px solid #ef4444 !important; }
 
-    .card-clima { border-left: 4px solid #89cdc4 !important; }
+    .card-clima { border-left: 4px solid #a1a1aa !important; }
 
-    .card-eletrica { border-left: 4px solid #68ae5c !important; }
+    .card-eletrica { border-left: 4px solid #b91c1c !important; }
 
     .card-automacao { border-left: 4px solid #242424 !important; }
 
@@ -36,11 +36,11 @@
 
     /* Serviço */
 
-    .bg-solar { background-color: rgba(104, 174, 92, 0.14); color: #4f8d46; border: 1px solid rgba(104, 174, 92, 0.28); }
+    .bg-solar { background-color: rgba(239, 68, 68, 0.12); color: #b91c1c; border: 1px solid rgba(239, 68, 68, 0.24); }
 
-    .bg-clima { background-color: rgba(137, 205, 196, 0.18); color: #242424; border: 1px solid rgba(137, 205, 196, 0.4); }
+    .bg-clima { background-color: rgba(212, 212, 216, 0.36); color: #242424; border: 1px solid rgba(161, 161, 170, 0.34); }
 
-    .bg-eletrica { background-color: rgba(104, 174, 92, 0.14); color: #4f8d46; border: 1px solid rgba(104, 174, 92, 0.28); }
+    .bg-eletrica { background-color: rgba(185, 28, 28, 0.12); color: #991b1b; border: 1px solid rgba(185, 28, 28, 0.24); }
 
     .bg-automacao { background-color: rgba(36, 36, 36, 0.08); color: #242424; border: 1px solid rgba(36, 36, 36, 0.16); }
 
@@ -49,11 +49,11 @@
 
     /* Origem */
 
-    .tag-insta { background-color: rgba(137, 205, 196, 0.18); color: #242424; border: 1px solid rgba(137, 205, 196, 0.42); }
+    .tag-insta { background-color: rgba(248, 113, 113, 0.14); color: #991b1b; border: 1px solid rgba(248, 113, 113, 0.26); }
 
-    .tag-google { background-color: rgba(104, 174, 92, 0.14); color: #4f8d46; border: 1px solid rgba(104, 174, 92, 0.28); }
+    .tag-google { background-color: rgba(185, 28, 28, 0.12); color: #991b1b; border: 1px solid rgba(185, 28, 28, 0.24); }
 
-    .tag-indicacao { background-color: rgba(104, 174, 92, 0.12); color: #4f8d46; border: 1px solid rgba(104, 174, 92, 0.24); }
+    .tag-indicacao { background-color: rgba(17, 17, 17, 0.06); color: #242424; border: 1px solid rgba(17, 17, 17, 0.14); }
 
     .tag-outros { background-color: rgba(221, 221, 221, 0.5); color: #242424; border: 1px solid rgba(36, 36, 36, 0.08); }
 
@@ -85,7 +85,7 @@
 
         transform: translateY(-4px);
 
-        border-color: rgba(104, 174, 92, 0.52);
+        border-color: rgba(248, 113, 113, 0.3);
 
         box-shadow: 0 24px 42px -32px rgba(0, 0, 0, 0.28);
 
@@ -95,7 +95,7 @@
 
     .kanban-card:active { cursor: grabbing; z-index: 20; }
 
-    .sortable-ghost { opacity: 0.4; background: rgba(137, 205, 196, 0.22); border: 2px dashed rgba(31, 31, 31, 0.28); }
+    .sortable-ghost { opacity: 0.4; background: rgba(254, 202, 202, 0.3); border: 2px dashed rgba(127, 29, 29, 0.24); }
 
    
 
@@ -105,9 +105,9 @@
 
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(104, 174, 92, 0.72); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(185, 28, 28, 0.6); border-radius: 10px; }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(79, 141, 70, 0.82); }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(127, 29, 29, 0.76); }
 
     .kanban-card-body {
 
@@ -263,16 +263,16 @@
 
     .stage-handle:hover {
         transform: translateY(-1px);
-        border-color: rgba(137, 205, 196, 0.45);
-        background: rgba(137, 205, 196, 0.12);
+        border-color: rgba(248, 113, 113, 0.24);
+        background: rgba(254, 202, 202, 0.18);
         color: rgba(36, 36, 36, 0.75);
     }
 
     .stage-empty {
-        border: 1px dashed rgba(137, 205, 196, 0.42);
+        border: 1px dashed rgba(248, 113, 113, 0.28);
         border-radius: 1rem;
         padding: 1rem;
-        background: rgba(137, 205, 196, 0.08);
+        background: rgba(254, 202, 202, 0.14);
         color: rgba(36, 36, 36, 0.58);
         font-size: 0.78rem;
         font-weight: 600;
@@ -302,7 +302,7 @@
         border-radius: 999px;
         border: 1px solid rgba(255, 255, 255, 0.9);
         box-shadow: 0 0 0 3px color-mix(in srgb, var(--stage-color) 16%, transparent);
-        background: var(--stage-color, #89cdc4);
+        background: var(--stage-color, #fecaca);
         flex-shrink: 0;
     }
 
@@ -330,8 +330,8 @@
 
     .action-pill:hover {
         transform: translateY(-1px);
-        border-color: rgba(137, 205, 196, 0.44);
-        background: rgba(137, 205, 196, 0.12);
+        border-color: rgba(248, 113, 113, 0.24);
+        background: rgba(254, 202, 202, 0.16);
         box-shadow: 0 14px 24px -20px rgba(36, 36, 36, 0.24);
     }
 
@@ -342,7 +342,7 @@
     }
 
     .action-pill-primary:hover {
-        border-color: rgba(104, 174, 92, 0.45);
+        border-color: rgba(248, 113, 113, 0.28);
         background: rgba(36, 36, 36, 0.98);
     }
 
@@ -360,15 +360,15 @@
     .stage-manager-shell {
         position: relative;
         overflow: hidden;
-        border: 1px solid rgba(104, 174, 92, 0.14);
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(248, 250, 248, 0.88));
+        border: 1px solid rgba(248, 113, 113, 0.14);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(250, 244, 244, 0.88));
     }
 
     .stage-manager-shell::after {
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle at top right, rgba(137, 205, 196, 0.12), transparent 34%);
+        background: radial-gradient(circle at top right, rgba(254, 202, 202, 0.18), transparent 34%);
         pointer-events: none;
     }
 
@@ -400,8 +400,8 @@
 
     .stage-action-btn:hover {
         transform: translateY(-1px);
-        border-color: rgba(137, 205, 196, 0.42);
-        background: rgba(137, 205, 196, 0.12);
+        border-color: rgba(248, 113, 113, 0.24);
+        background: rgba(254, 202, 202, 0.18);
         color: rgba(36, 36, 36, 0.88);
     }
 
@@ -452,7 +452,7 @@
 
 
 
-    <div class="dashboard-reveal relative overflow-hidden rounded-[30px] border border-primary/35 bg-[linear-gradient(135deg,#242424_0%,#68ae5c_52%,#89cdc4_100%)] px-6 py-7 md:px-8 md:py-8 text-white shadow-[0_30px_80px_-40px_rgba(36,36,36,0.55)]">
+    <div class="dashboard-reveal relative overflow-hidden rounded-[30px] border border-red-200/70 bg-[linear-gradient(135deg,#111111_0%,#7f1d1d_52%,#ef4444_100%)] px-6 py-7 md:px-8 md:py-8 text-white shadow-[0_30px_80px_-40px_rgba(36,36,36,0.55)]">
 
         <div class="absolute inset-y-0 right-0 w-1/3 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.24),transparent_62%)]"></div>
 
@@ -460,9 +460,9 @@
 
             <div class="max-w-3xl">
 
-                <p class="text-[11px] font-black uppercase tracking-[0.28em] text-soft/90">Pipeline Comercial</p>
+                <p class="text-[11px] font-black uppercase tracking-[0.28em] text-white/70">Dashboard</p>
 
-                <h2 class="mt-3 text-3xl font-black tracking-tight text-white md:text-4xl">Visão rápida do funil.</h2>
+                <h2 class="mt-3 text-3xl font-black tracking-tight text-white md:text-4xl">Funil de leads</h2>
 
             </div>
 
@@ -490,7 +490,7 @@
 
                 <p class="text-xs font-bold text-charcoal/45 uppercase tracking-widest">Total Ativos</p>
 
-                <div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center text-charcoal">
+                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-secondary">
 
                     <i data-lucide="layers" class="w-5 h-5"></i>
 
@@ -500,7 +500,7 @@
 
             <h3 class="text-4xl font-extrabold text-charcoal">{{ kpi_total_ativos }}</h3>
 
-            <p class="text-xs text-charcoal/45 mt-1">Leads em andamento</p>
+            <p class="text-xs text-charcoal/45 mt-1">Em aberto</p>
 
         </div>
 
@@ -512,7 +512,7 @@
 
                 <p class="text-xs font-bold text-charcoal/45 uppercase tracking-widest">Em Negociação</p>
 
-                <div class="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center text-secondary">
+                <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center text-secondary">
 
                     <i data-lucide="dollar-sign" class="w-5 h-5"></i>
 
@@ -522,7 +522,7 @@
 
             <h3 class="text-4xl font-extrabold text-secondary tracking-tight">
 
-                <span class="text-lg align-top mr-0.5 text-primary">R$</span>{{ kpi_valor_negociacao|floatformat:0 }}
+                <span class="text-lg align-top mr-0.5 text-red-200">R$</span>{{ kpi_valor_negociacao|floatformat:0 }}
 
             </h3>
 
@@ -546,9 +546,9 @@
 
                 <div class="flex items-center justify-end gap-2"><span class="text-xs font-bold text-charcoal/80">Site / Google</span><span class="w-2.5 h-2.5 rounded-full bg-secondary"></span></div>
 
-                <div class="flex items-center justify-end gap-2"><span class="text-xs font-bold text-charcoal/80">Instagram</span><span class="w-2.5 h-2.5 rounded-full bg-accent"></span></div>
+                <div class="flex items-center justify-end gap-2"><span class="text-xs font-bold text-charcoal/80">Instagram</span><span class="w-2.5 h-2.5 rounded-full bg-red-300"></span></div>
 
-                <div class="flex items-center justify-end gap-2"><span class="text-xs font-bold text-charcoal/80">Indicação</span><span class="w-2.5 h-2.5 rounded-full bg-primary"></span></div>
+                <div class="flex items-center justify-end gap-2"><span class="text-xs font-bold text-charcoal/80">Indicação</span><span class="w-2.5 h-2.5 rounded-full bg-charcoal"></span></div>
 
             </div>
 
@@ -560,8 +560,8 @@
         <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div class="max-w-xl">
                 <p class="text-[11px] font-black uppercase tracking-[0.24em] text-secondary">Etapas</p>
-                <h3 class="mt-1 text-lg font-black text-charcoal">Defina como o quadro distribui os leads.</h3>
-                <p class="mt-2 text-xs leading-5 text-charcoal/48">Crie, renomeie ou remova colunas para refletir melhor o avanço comercial.</p>
+                <h3 class="mt-1 text-lg font-black text-charcoal">Gerencie as colunas do funil.</h3>
+                <p class="mt-2 text-xs leading-5 text-charcoal/48">Crie, renomeie ou remova etapas.</p>
             </div>
 
             <div class="flex flex-wrap items-center gap-2.5">
@@ -1491,7 +1491,7 @@
 
             chart: { type: 'donut', width: 160, height: 160, parentHeightOffset: 0 },
 
-            colors: ['#68ae5c', '#89cdc4', '#8bc269', '#242424'],
+            colors: ['#b91c1c', '#f87171', '#111111', '#a1a1aa'],
 
             stroke: { width: 0 },
 

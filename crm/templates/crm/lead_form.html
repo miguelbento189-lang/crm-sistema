@@ -5,8 +5,8 @@
 <div class="min-h-screen bg-soft/35 p-4 md:p-8 animate-fade-in">
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 max-w-[1920px] mx-auto">
         <div>
-            <div class="inline-flex items-center gap-3 rounded-full border border-primary/20 bg-white/90 px-4 py-2 shadow-sm">
-                <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[linear-gradient(145deg,rgba(104,174,92,0.18),rgba(137,205,196,0.16))] text-charcoal">
+            <div class="inline-flex items-center gap-3 rounded-full border border-red-100 bg-white/90 px-4 py-2 shadow-sm">
+                <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[linear-gradient(145deg,rgba(185,28,28,0.16),rgba(254,202,202,0.16))] text-charcoal">
                     <i data-lucide="kanban-square" class="h-5 w-5"></i>
                 </span>
                 <div>
@@ -14,7 +14,7 @@
                     <h1 class="text-3xl font-extrabold text-charcoal tracking-tight">Novo Lead</h1>
                 </div>
             </div>
-            <p class="mt-3 text-charcoal/60 font-medium">Cadastre um contato com dados claros, contexto comercial e localização suficiente para o time agir sem retrabalho.</p>
+            <p class="mt-3 text-charcoal/60 font-medium">Cadastre um contato com os dados essenciais.</p>
         </div>
         <div class="flex gap-3 w-full md:w-auto">
             <button type="button" onclick="cancelarLead()" class="btn-soft px-6 py-3 rounded-lg border-2 border-soft text-charcoal font-bold hover:bg-white transition text-center">Cancelar</button>
@@ -36,7 +36,7 @@
                 </h3>
             </div>
             <div class="p-6 space-y-6 flex-1">
-                <p class="text-sm leading-6 text-charcoal/62">Dados principais para o primeiro contato e para o histórico ficar confiável desde a entrada.</p>
+                <p class="text-sm leading-6 text-charcoal/62">Dados principais para o primeiro contato.</p>
                 <div class="w-full">
                     <label class="label-custom text-charcoal">Nome / Razão Social <span class="text-secondary">*</span></label>
                     <input type="text" name="nome" required class="input-custom input-shell pr-4" placeholder="Ex.: Mariana Souza ou Construtora Horizonte">
@@ -50,8 +50,8 @@
                 <div class="w-full">
                     <label class="label-custom text-charcoal">CPF / CNPJ</label>
                     <div class="relative flex items-center">
-                        <input type="text" name="documento" id="documento" class="input-custom input-shell pr-12" placeholder="Use CPF ou CNPJ para enriquecer o cadastro" oninput="mascaraDocumento(this)">
-                        <button type="button" onclick="buscarReceita()" class="btn-soft absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded bg-accent/25 text-charcoal font-bold hover:bg-accent/40 transition flex items-center gap-1 text-xs shadow-none">
+                        <input type="text" name="documento" id="documento" class="input-custom input-shell pr-12" placeholder="Use CPF ou CNPJ para complementar o cadastro" oninput="mascaraDocumento(this)">
+                        <button type="button" onclick="buscarReceita()" class="btn-soft absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded bg-red-100 text-charcoal font-bold hover:bg-red-200 transition flex items-center gap-1 text-xs shadow-none">
                             <i data-lucide="search" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -65,7 +65,7 @@
         </div>
 
         <div class="panel-surface stagger-pop overflow-hidden flex flex-col h-full" style="animation-delay: 0.04s;">
-            <div class="bg-accent px-6 py-4">
+            <div class="bg-soft px-6 py-4">
                 <h3 class="text-charcoal font-bold text-lg uppercase tracking-wider flex items-center">
                     <i data-lucide="map-pin" class="w-6 h-6 mr-3 opacity-90"></i>
                     2. Endereço
@@ -73,7 +73,7 @@
             </div>
 
             <div class="p-6 space-y-5 flex-1">
-                <p class="text-sm leading-6 text-charcoal/62">Endereço útil para visita, roteirização e entendimento rápido da área de atendimento.</p>
+                <p class="text-sm leading-6 text-charcoal/62">Endereço para visita e atendimento.</p>
                 <div class="w-full">
                     <label class="label-custom text-charcoal">CEP</label>
                     <div class="relative">
@@ -121,7 +121,7 @@
         </div>
 
         <div class="panel-surface stagger-pop overflow-hidden flex flex-col h-full" style="animation-delay: 0.08s;">
-            <div class="bg-primary px-6 py-4">
+            <div class="bg-red-50 px-6 py-4">
                 <h3 class="text-charcoal font-bold text-lg uppercase tracking-wider flex items-center">
                     <i data-lucide="target" class="w-6 h-6 mr-3 opacity-90"></i>
                     3. Classificação
@@ -129,7 +129,7 @@
             </div>
 
             <div class="p-6 space-y-6 flex-1 flex flex-col">
-                <p class="text-sm leading-6 text-charcoal/62">Contexto comercial para origem, estimativa de valor e observações já na entrada do funil.</p>
+                <p class="text-sm leading-6 text-charcoal/62">Origem, valor estimado e observações.</p>
 
                 <div class="w-full">
                     <label class="label-custom text-charcoal">Origem do Lead</label>
@@ -186,7 +186,7 @@
     }
 
     .input-custom:hover {
-        border-color: #89cdc4;
+        border-color: #fca5a5;
     }
 
     .input-readonly {
