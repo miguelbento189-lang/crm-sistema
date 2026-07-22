@@ -111,6 +111,14 @@ if VERCEL_URL:
     vercel_origin = f'https://{VERCEL_URL}'
     if vercel_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(vercel_origin)
+
+if env_bool('VERCEL', default=False):
+    vercel_preview_host = '.vercel.app'
+    vercel_preview_origin = 'https://*.vercel.app'
+    if vercel_preview_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(vercel_preview_host)
+    if vercel_preview_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(vercel_preview_origin)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = env_bool('USE_X_FORWARDED_HOST', default=True)
 SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', default=False)
