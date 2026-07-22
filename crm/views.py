@@ -14,11 +14,29 @@ from .models import Historico, Lead, PipelineStage
 
 PUBLIC_LEAD_ALLOWED_ORIGINS = {
     'https://laudos.forcaeng.com.br',
+    'https://www.laudos.forcaeng.com.br',
     'https://forcaeng.com.br',
     'https://www.forcaeng.com.br',
     'http://127.0.0.1:5500',
     'http://localhost:5500',
 }
+
+
+def is_public_lead_origin_allowed(origin):
+    if not origin:
+        return False
+
+    normalized_origin = origin.rstrip('/')
+    if normalized_origin in PUBLIC_LEAD_ALLOWED_ORIGINS:
+        return True
+
+    if normalized_origin.startswith('https://') and normalized_origin.endswith('.forcaeng.com.br'):
+        return True
+
+    if normalized_origin.startswith('http://localhost') or normalized_origin.startswith('http://127.0.0.1'):
+        return True
+
+    return False
 
 
 def parse_money_br(raw_value):
@@ -124,7 +142,7 @@ def create_lead_from_payload(payload, *, actor='site'):
 
 def add_public_cors_headers(request, response):
     origin = (request.headers.get('Origin') or '').rstrip('/')
-    if origin in PUBLIC_LEAD_ALLOWED_ORIGINS:
+    if is_public_lead_origin_allowed(origin):
         response['Access-Control-Allow-Origin'] = origin
         response['Vary'] = 'Origin'
     response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
