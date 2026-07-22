@@ -51,7 +51,7 @@
     .pipeline-shell {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
+      grid-template-columns: 300px minmax(0, 1fr);
     }
 
     .pipeline-sidebar {
@@ -64,20 +64,30 @@
     }
 
     .brand-lockup {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.85rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      width: 100%;
+    }
+
+    .sidebar-brand {
+      border: 1px solid rgba(221, 221, 221, 0.14);
+      border-radius: 0.95rem;
+      padding: 1rem;
+      background: linear-gradient(160deg, rgba(185, 28, 28, 0.2), rgba(255, 255, 255, 0.03));
+      box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.08);
     }
 
     .brand-mark {
-      width: 3.5rem;
-      height: 3.5rem;
-      border-radius: 0.45rem;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 0.75rem;
+      padding: 0.4rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       background: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       box-shadow: 0 14px 30px -22px rgba(0, 0, 0, 0.44);
       flex: 0 0 auto;
     }
@@ -89,18 +99,54 @@
       filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.28));
     }
 
+    .brand-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.74);
+      line-height: 1.35;
+    }
+
+    .brand-title {
+      margin-top: 0.3rem;
+      font-size: clamp(2.1rem, 2.2vw, 2.55rem);
+      font-weight: 900;
+      line-height: 0.95;
+      color: #ffffff;
+    }
+
+    .brand-summary {
+      margin-top: 0.95rem;
+      font-size: 0.93rem;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.72);
+      max-width: 22ch;
+    }
+
+    .pipeline-nav {
+      display: grid;
+      gap: 0.65rem;
+    }
+
     .pipeline-link {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       border: 1px solid rgba(221, 221, 221, 0.12);
       border-radius: 0.7rem;
-      padding: 0.9rem 1rem;
+      min-height: 3.55rem;
+      padding: 0.95rem 1rem;
       font-size: 0.82rem;
       font-weight: 800;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       transition: background-color 0.24s ease, border-color 0.24s ease, transform 0.24s ease, box-shadow 0.24s ease;
+    }
+
+    .pipeline-link i {
+      color: rgba(255, 255, 255, 0.92);
+      flex: 0 0 auto;
     }
 
     .pipeline-link:hover {
@@ -196,6 +242,29 @@
         border-right: 0;
         border-bottom: 1px solid rgba(255, 255, 255, 0.12);
       }
+
+      .brand-summary {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .sidebar-brand {
+        padding: 0.9rem;
+      }
+
+      .brand-mark {
+        width: 3.4rem;
+        height: 3.4rem;
+      }
+
+      .brand-title {
+        font-size: clamp(1.8rem, 8vw, 2.2rem);
+      }
+
+      .pipeline-link {
+        min-height: 3.25rem;
+      }
     }
   </style>
   {% block extra_head %}{% endblock %}
@@ -205,19 +274,21 @@
     <aside class="pipeline-sidebar p-6 lg:p-7">
       <div class="flex h-full flex-col gap-8">
         <div>
-          <div class="brand-lockup">
-            <div class="brand-mark" aria-hidden="true">
-              <img src="{% static 'logo/forca-logo.png' %}" alt="Força Engenharia">
+          <div class="sidebar-brand">
+            <div class="brand-lockup">
+              <div class="brand-mark" aria-hidden="true">
+                <img src="{% static 'logo/forca-logo.png' %}" alt="Força Engenharia">
+              </div>
+              <div>
+                <p class="brand-eyebrow">Força Engenharia</p>
+                <h1 class="brand-title">CRM<br>Comercial</h1>
+              </div>
             </div>
-            <div>
-              <p class="text-[11px] font-black uppercase tracking-[0.32em] text-white/72">Força Engenharia</p>
-              <h1 class="mt-1 text-3xl font-black text-white">CRM Comercial</h1>
-            </div>
+            <p class="brand-summary">Captação e acompanhamento de leads.</p>
           </div>
-          <p class="mt-4 max-w-xs text-sm leading-6 text-white/68">Captação e acompanhamento de leads.</p>
         </div>
 
-        <nav class="grid gap-3">
+        <nav class="pipeline-nav">
           <a href="{% url 'crm:crm_dashboard' %}" class="pipeline-link {% if request.resolver_match.url_name == 'crm_dashboard' %}is-active{% endif %}">
             <i data-lucide="kanban-square" class="h-5 w-5"></i>
             <span>Pipeline</span>
