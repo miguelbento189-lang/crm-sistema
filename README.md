@@ -88,6 +88,7 @@ Fluxo sugerido:
 	- SECRET_KEY=(valor forte)
 	- USE_SQLITE=False
 	- DATABASE_URL=(Postgres gerenciado)
+	- BOOTSTRAP_USERS_JSON=(opcional apenas para fallback SQLite temporario)
 	- ALLOWED_HOSTS=crm.forcaeng.com.br
 	- CSRF_TRUSTED_ORIGINS=https://crm.forcaeng.com.br
 	- VERCEL_URL=(deixe vazio; a Vercel injeta automaticamente)
@@ -97,6 +98,8 @@ Fluxo sugerido:
 	- CSRF_COOKIE_SECURE=True
 	- DISABLE_STATIC_MANIFEST=True
 5. Clique em Deploy.
+
+Se estiver usando o fallback temporario com SQLite no Vercel, defina `BOOTSTRAP_USERS_JSON` com um array JSON de usuarios para recria-los a cada inicializacao, por exemplo `[{"username":"Miguel","password":"senha-forte"},{"username":"Rael","password":"outra-senha"}]`.
 
 ### Dominio crm.forcaeng.com.br
 
