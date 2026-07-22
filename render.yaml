@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: portfolio-crm
+    name: crm-forcaeng
     env: python
     plan: starter
-    buildCommand: bash scripts/render-build.sh
-    startCommand: bash scripts/render-start.sh
+    buildCommand: bash build_files.sh
+    startCommand: python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: core.settings
@@ -29,12 +29,12 @@ services:
       # Configure estas variáveis no serviço do Render ou neste blueprint:
       # - key: DATABASE_URL
       #   fromDatabase:
-      #     name: portfolio-crm-db
+      #     name: crm-forcaeng-db
       #     property: connectionString
       # - key: ALLOWED_HOSTS
-      #   value: portfolio-crm.onrender.com
+      #   value: crm.forcaeng.com.br,crm-forcaeng.onrender.com
       # - key: CSRF_TRUSTED_ORIGINS
-      #   value: https://portfolio-crm.onrender.com
+      #   value: https://crm.forcaeng.com.br,https://crm-forcaeng.onrender.com
       # - key: CLOUDINARY_STORAGE_CLOUD_NAME
       #   value: seu-cloud-name
       # - key: CLOUDINARY_STORAGE_API_KEY

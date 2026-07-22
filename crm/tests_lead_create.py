@@ -151,6 +151,9 @@ class LeadCreateViewTests(TestCase):
         self.assertEqual(lead.whatsapp, '64999999999')
         self.assertEqual(lead.servico, 'spda')
         self.assertEqual(lead.origem, 'site')
+        self.assertEqual(lead.page_url, 'https://laudos.forcaeng.com.br/')
+        self.assertEqual(lead.referrer, 'google')
+        self.assertEqual(lead.utm_campaign, 'campanha-laudos')
         self.assertIn('Contato: Miguel Bento', lead.observacoes)
         self.assertEqual(response['Access-Control-Allow-Origin'], 'https://laudos.forcaeng.com.br')
 

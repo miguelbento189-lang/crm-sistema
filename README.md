@@ -38,6 +38,14 @@ Use `python manage.py test crm.tests_lead_create` para rodar a suite focada atua
 
 O projeto esta preparado para subir em um repositorio GitHub separado deste diretorio. O arquivo `.env` continua ignorado e nao deve ser versionado.
 
+Host de producao esperado:
+
+- `crm.forcaeng.com.br`
+
+Endpoint publico esperado para captura da landing:
+
+- `https://crm.forcaeng.com.br/sistema/crm/api/public/leads/`
+
 ## Deploy estilo Vercel
 
 O repositorio agora inclui arquivos para deploy serverless:
@@ -60,5 +68,13 @@ Fluxo sugerido:
 2. conecte o repositorio no provedor
 3. use `python manage.py migrate` em um passo de post-deploy ou migration job
 4. publique a branch `main`
+
+## Checklist de deploy para o subdominio
+
+1. aponte `crm.forcaeng.com.br` para o provedor escolhido
+2. configure `ALLOWED_HOSTS=crm.forcaeng.com.br`
+3. configure `CSRF_TRUSTED_ORIGINS=https://crm.forcaeng.com.br`
+4. publique a branch `main`
+5. rode as migracoes antes de validar o endpoint publico
 
 Para validar localmente antes do deploy, rode `python manage.py check` e `python manage.py collectstatic --noinput`.

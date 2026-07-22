@@ -775,7 +775,7 @@
 
                             {% elif lead.servico == 'climatizacao' %}card-clima
 
-                            {% elif lead.servico == 'eletrica' %}card-eletrica
+                            {% elif lead.servico == 'eletrica' or lead.servico == 'eletrico' or lead.servico == 'spda' or lead.servico == 'ambos' or lead.servico == 'orcamento' %}card-eletrica
 
                             {% elif lead.servico == 'automacao' %}card-automacao
 
@@ -808,7 +808,7 @@
 
                                             {% elif lead.servico == 'climatizacao' %}bg-clima
 
-                                            {% elif lead.servico == 'eletrica' %}bg-eletrica
+                                            {% elif lead.servico == 'eletrica' or lead.servico == 'eletrico' or lead.servico == 'spda' or lead.servico == 'ambos' or lead.servico == 'orcamento' %}bg-eletrica
 
                                             {% elif lead.servico == 'automacao' %}bg-automacao
 
@@ -845,6 +845,18 @@
                                             {{ lead.get_origem_display|default:lead.origem }}
 
                                         </span>
+
+                                        {% if lead.utm_source %}
+                                        <span class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-charcoal/8 text-charcoal/75">
+                                            UTM {{ lead.utm_source }}
+                                        </span>
+                                        {% endif %}
+
+                                        {% if lead.utm_campaign %}
+                                        <span class="text-[9px] font-bold tracking-wide px-1.5 py-0.5 rounded bg-secondary/10 text-secondary max-w-full truncate" title="{{ lead.utm_campaign }}">
+                                            {{ lead.utm_campaign }}
+                                        </span>
+                                        {% endif %}
 
                                     </div>
 
@@ -912,6 +924,13 @@
 
                                     </div>
 
+                                    {% endif %}
+
+                                    {% if lead.page_url %}
+                                    <div class="kanban-card-meta-item">
+                                        <i data-lucide="link" class="w-3.5 h-3.5 text-charcoal/40 shrink-0 mt-[1px]"></i>
+                                        <span class="truncate" title="{{ lead.page_url }}">{{ lead.page_url }}</span>
+                                    </div>
                                     {% endif %}
 
                                 </div>

@@ -19,7 +19,7 @@
                     <span class="px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide border
                         {% if lead.servico == 'solar' %}bg-primary/15 text-secondary border-primary/40
                         {% elif lead.servico == 'climatizacao' %}bg-accent/18 text-charcoal border-accent/45
-                        {% elif lead.servico == 'eletrica' %}bg-secondary/14 text-secondary border-secondary/30
+                        {% elif lead.servico == 'eletrica' or lead.servico == 'eletrico' or lead.servico == 'spda' or lead.servico == 'ambos' or lead.servico == 'orcamento' %}bg-secondary/14 text-secondary border-secondary/30
                         {% else %}bg-soft/60 text-charcoal border-soft{% endif %}">
                         {{ lead.get_servico_display }}
                     </span>
@@ -163,8 +163,61 @@
                         <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Estágio atual</p>
                         <p class="mt-1 text-sm font-bold text-charcoal">{{ lead.get_estagio_display|default:lead.estagio|default:"Em andamento" }}</p>
                     </div>
+                    {% if lead.utm_campaign %}
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Campanha</p>
+                        <p class="mt-1 text-sm font-bold text-charcoal break-all">{{ lead.utm_campaign }}</p>
+                    </div>
+                    {% endif %}
+                    {% if lead.utm_source or lead.utm_medium %}
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Origem de mídia</p>
+                        <p class="mt-1 text-sm font-bold text-charcoal">
+                            {{ lead.utm_source|default:'--' }}
+                            {% if lead.utm_medium %}<span class="text-charcoal/55">/ {{ lead.utm_medium }}</span>{% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
+
+            <div class="panel-surface p-6">
+                <h4 class="font-bold text-charcoal mb-4 text-[10px] uppercase tracking-widest border-b border-soft pb-2">Captação</h4>
+                <div class="grid gap-3">
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Página de captura</p>
+                        {% if lead.page_url %}
+                        <a href="{{ lead.page_url }}" target="_blank" rel="noopener noreferrer" class="mt-1 block text-sm font-bold text-secondary break-all hover:underline">{{ lead.page_url }}</a>
+                        {% else %}
+                        <p class="mt-1 text-sm font-bold text-charcoal">--</p>
+                        {% endif %}
+                    </div>
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Referrer</p>
+                        {% if lead.referrer %}
+                        <p class="mt-1 text-sm font-bold text-charcoal break-all">{{ lead.referrer }}</p>
+                        {% else %}
+                        <p class="mt-1 text-sm font-bold text-charcoal">--</p>
+                        {% endif %}
+                    </div>
+                    {% if lead.utm_term or lead.utm_content %}
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Detalhes UTM</p>
+                        <div class="mt-1 space-y-1 text-sm font-bold text-charcoal">
+                            {% if lead.utm_term %}<p><span class="text-charcoal/55">utm_term:</span> {{ lead.utm_term }}</p>{% endif %}
+                            {% if lead.utm_content %}<p><span class="text-charcoal/55">utm_content:</span> {{ lead.utm_content }}</p>{% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if lead.observacoes %}
+            <div class="panel-surface p-6">
+                <h4 class="font-bold text-charcoal mb-4 text-[10px] uppercase tracking-widest border-b border-soft pb-2">Observações</h4>
+                <p class="text-sm leading-6 text-charcoal/75 whitespace-pre-line">{{ lead.observacoes }}</p>
+            </div>
+            {% endif %}
 
             <div class="panel-surface p-6">
                 <h4 class="font-bold text-charcoal mb-4 text-[10px] uppercase tracking-widest border-b border-soft pb-2">Endereço</h4>
