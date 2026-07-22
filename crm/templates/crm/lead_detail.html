@@ -36,6 +36,11 @@
                     <span class="flex items-center gap-1 text-charcoal font-bold bg-soft/45 px-2 py-1 rounded-md">
                         <i data-lucide="phone" class="w-3 h-3"></i> {{ lead.whatsapp }}
                     </span>
+                    {% if lead.email %}
+                    <span class="flex items-center gap-1 text-charcoal font-bold bg-soft/45 px-2 py-1 rounded-md">
+                        <i data-lucide="mail" class="w-3 h-3"></i> {{ lead.email }}
+                    </span>
+                    {% endif %}
                     <span class="flex items-center gap-1">
                         <i data-lucide="map-pin" class="w-3 h-3"></i>
                         {% if lead.cidade %}{{ lead.cidade }}/{{ lead.estado }}{% else %}Local não informado{% endif %}
@@ -159,6 +164,12 @@
                         <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Origem</p>
                         <p class="mt-1 text-sm font-bold text-charcoal">{{ lead.get_origem_display|default:lead.origem|default:"Não informada" }}</p>
                     </div>
+                    {% if lead.documento %}
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Documento</p>
+                        <p class="mt-1 text-sm font-bold text-charcoal">{{ lead.documento }}</p>
+                    </div>
+                    {% endif %}
                     <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
                         <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Estágio atual</p>
                         <p class="mt-1 text-sm font-bold text-charcoal">{{ lead.get_estagio_display|default:lead.estagio|default:"Em andamento" }}</p>

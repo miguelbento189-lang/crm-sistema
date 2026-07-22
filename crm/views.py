@@ -54,14 +54,21 @@ def ensure_pipeline_stages():
     PipelineStage.bootstrap_defaults()
 
 
-def build_lead_observations(*, contact_name, company, description, page_url, referrer, utm_data):
+def build_lead_observations(*, contact_name, company, email, description, documento, endereco, numero, bairro, cidade, estado, cep, page_url, referrer, utm_data):
     notes = []
     if contact_name:
         notes.append(f'Contato: {contact_name}')
     if company:
         notes.append(f'Empresa: {company}')
+    if email:
+        notes.append(f'E-mail: {email}')
+    if documento:
+        notes.append(f'Documento: {documento}')
     if description:
         notes.append(f'Descricao: {description}')
+    address_parts = [part for part in [endereco, numero, bairro, cidade, estado, cep] if part]
+    if address_parts:
+        notes.append(f'Endereco: {" | ".join(address_parts)}')
     if page_url:
         notes.append(f'Pagina: {page_url}')
     if referrer:
@@ -92,6 +99,14 @@ def create_lead_from_payload(payload, *, actor='site'):
 
     contact_name = (payload.get('full_name') or payload.get('name') or '').strip()
     company = (payload.get('company') or '').strip()
+    email = (payload.get('email') or '').strip()
+    documento = (payload.get('documento') or '').strip()
+    cep = (payload.get('cep') or '').strip()
+    endereco = (payload.get('endereco') or '').strip()
+    numero = (payload.get('numero') or '').strip()
+    bairro = (payload.get('bairro') or '').strip()
+    cidade = (payload.get('cidade') or '').strip()
+    estado = (payload.get('estado') or '').strip()
     nome_razao = company or contact_name
     if not nome_razao:
         raise ValueError('Informe pelo menos o nome do contato ou da empresa.')
@@ -110,7 +125,14 @@ def create_lead_from_payload(payload, *, actor='site'):
     lead = Lead.objects.create(
         nome_razao=nome_razao,
         whatsapp=(payload.get('whatsapp') or '').strip(),
-        email=(payload.get('email') or '').strip(),
+        email=email,
+        documento=documento,
+        cep=cep,
+        endereco=endereco,
+        numero=numero,
+        bairro=bairro,
+        cidade=cidade,
+        estado=estado,
         servico=map_service_choice(payload.get('interest_service') or payload.get('servico')),
         origem=origem,
         page_url=(payload.get('page_url') or '').strip(),
@@ -124,7 +146,15 @@ def create_lead_from_payload(payload, *, actor='site'):
         observacoes=build_lead_observations(
             contact_name=contact_name,
             company=company,
+            email=email,
             description=(payload.get('description') or payload.get('descricao') or '').strip(),
+            documento=documento,
+            endereco=endereco,
+            numero=numero,
+            bairro=bairro,
+            cidade=cidade,
+            estado=estado,
+            cep=cep,
             page_url=(payload.get('page_url') or '').strip(),
             referrer=(payload.get('referrer') or '').strip(),
             utm_data=utm_data,
@@ -135,7 +165,7 @@ def create_lead_from_payload(payload, *, actor='site'):
         lead=lead,
         usuario=actor,
         tipo='nota',
-        nota='Lead cadastrado via landing page.',
+        nota='Lead cadastrado via site/landing page.',
     )
     return lead
 
