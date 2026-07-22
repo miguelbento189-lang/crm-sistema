@@ -51,7 +51,7 @@
     .pipeline-shell {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 300px minmax(0, 1fr);
+      grid-template-columns: 312px minmax(0, 1fr);
     }
 
     .pipeline-sidebar {
@@ -65,24 +65,24 @@
 
     .brand-lockup {
       display: flex;
-      align-items: flex-start;
-      gap: 0.9rem;
+      align-items: center;
+      gap: 0.8rem;
       width: 100%;
     }
 
     .sidebar-brand {
       border: 1px solid rgba(221, 221, 221, 0.14);
-      border-radius: 0.95rem;
-      padding: 1rem;
-      background: linear-gradient(160deg, rgba(185, 28, 28, 0.2), rgba(255, 255, 255, 0.03));
-      box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.08);
+      border-radius: 0.9rem;
+      padding: 0.95rem;
+      background: linear-gradient(160deg, rgba(185, 28, 28, 0.14), rgba(255, 255, 255, 0.02));
+      box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.06);
     }
 
     .brand-mark {
-      width: 4rem;
-      height: 4rem;
-      border-radius: 0.75rem;
-      padding: 0.4rem;
+      width: 3.35rem;
+      height: 3.35rem;
+      border-radius: 0.65rem;
+      padding: 0.35rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -100,53 +100,73 @@
     }
 
     .brand-eyebrow {
-      font-size: 0.68rem;
+      font-size: 0.64rem;
       font-weight: 900;
-      letter-spacing: 0.28em;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.74);
-      line-height: 1.35;
+      line-height: 1.2;
     }
 
     .brand-title {
-      margin-top: 0.3rem;
-      font-size: clamp(2.1rem, 2.2vw, 2.55rem);
+      margin-top: 0.25rem;
+      font-size: clamp(1.8rem, 1.95vw, 2.2rem);
       font-weight: 900;
-      line-height: 0.95;
+      line-height: 0.9;
       color: #ffffff;
     }
 
+    .brand-title span {
+      display: block;
+      margin-top: 0.08rem;
+      font-size: 0.84em;
+      letter-spacing: -0.01em;
+    }
+
     .brand-summary {
-      margin-top: 0.95rem;
-      font-size: 0.93rem;
-      line-height: 1.55;
+      margin-top: 0.8rem;
+      font-size: 1rem;
+      line-height: 1.45;
       color: rgba(255, 255, 255, 0.72);
-      max-width: 22ch;
+      max-width: 24ch;
     }
 
     .pipeline-nav {
       display: grid;
-      gap: 0.65rem;
+      gap: 0.75rem;
     }
 
     .pipeline-link {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.7rem;
       border: 1px solid rgba(221, 221, 221, 0.12);
-      border-radius: 0.7rem;
-      min-height: 3.55rem;
-      padding: 0.95rem 1rem;
+      border-radius: 0.9rem;
+      min-height: 3.45rem;
+      padding: 0.85rem 1rem;
       font-size: 0.82rem;
       font-weight: 800;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       transition: background-color 0.24s ease, border-color 0.24s ease, transform 0.24s ease, box-shadow 0.24s ease;
     }
 
+    .pipeline-link .menu-icon {
+      width: 1.9rem;
+      height: 1.9rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.04);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+
     .pipeline-link i {
       color: rgba(255, 255, 255, 0.92);
-      flex: 0 0 auto;
+      width: 1rem;
+      height: 1rem;
     }
 
     .pipeline-link:hover {
@@ -160,6 +180,11 @@
       background: rgba(185, 28, 28, 0.18);
       border-color: rgba(248, 113, 113, 0.28);
       box-shadow: inset 0 0 0 1px rgba(254, 202, 202, 0.14);
+    }
+
+    .pipeline-link.is-active .menu-icon {
+      border-color: rgba(254, 202, 202, 0.35);
+      background: rgba(185, 28, 28, 0.32);
     }
 
     .message-card {
@@ -281,7 +306,7 @@
               </div>
               <div>
                 <p class="brand-eyebrow">Força Engenharia</p>
-                <h1 class="brand-title">CRM<br>Comercial</h1>
+                <h1 class="brand-title">CRM <span>Comercial</span></h1>
               </div>
             </div>
             <p class="brand-summary">Captação e acompanhamento de leads.</p>
@@ -290,11 +315,11 @@
 
         <nav class="pipeline-nav">
           <a href="{% url 'crm:crm_dashboard' %}" class="pipeline-link {% if request.resolver_match.url_name == 'crm_dashboard' %}is-active{% endif %}">
-            <i data-lucide="kanban-square" class="h-5 w-5"></i>
+            <span class="menu-icon"><i data-lucide="kanban-square"></i></span>
             <span>Pipeline</span>
           </a>
           <a href="{% url 'crm:cadastrar_lead' %}" class="pipeline-link {% if request.resolver_match.url_name == 'cadastrar_lead' %}is-active{% endif %}">
-            <i data-lucide="user-plus" class="h-5 w-5"></i>
+            <span class="menu-icon"><i data-lucide="user-plus"></i></span>
             <span>Novo Lead</span>
           </a>
         </nav>
