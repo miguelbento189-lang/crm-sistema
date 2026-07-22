@@ -189,10 +189,18 @@ GOOGLE_MAPS_BROWSER_API_KEY = env_str('GOOGLE_MAPS_BROWSER_API_KEY', default='')
 GOOGLE_MAPS_MAP_ID = env_str('GOOGLE_MAPS_MAP_ID', default='')
 
 if USE_SQLITE or not DATABASE_URL:
+    sqlite_name = env_str('SQLITE_NAME', default='').strip()
+    if not sqlite_name:
+        vercel_runtime = bool(
+            env_str('VERCEL_URL', default='').strip()
+            or env_str('VERCEL_ENV', default='').strip()
+            or env_bool('VERCEL', default=False)
+        )
+        sqlite_name = '/tmp/db.sqlite3' if vercel_runtime else str(BASE_DIR / 'db.sqlite3')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': sqlite_name,
         }
     }
 else:
