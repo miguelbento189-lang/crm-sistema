@@ -9,7 +9,7 @@ services:
       - key: DJANGO_SETTINGS_MODULE
         value: core.settings
       - key: PYTHON_VERSION
-        value: 3.11
+        value: 3.12
       - key: DEBUG
         value: "False"
       - key: USE_SQLITE

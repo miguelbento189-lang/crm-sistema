@@ -11,12 +11,12 @@
     tailwind.config = {
       theme: {
         extend: {
-          colors: {
-            primary: '#8bc269',
+            colors: {
+            primary: '#68ae5c',
             accent: '#89cdc4',
-            secondary: '#68ae5c',
-            charcoal: '#242424',
-            soft: '#dddddd',
+            secondary: '#4f8d46',
+            charcoal: '#1f1f1f',
+            soft: '#e0e0e0',
           },
         },
       },
@@ -27,19 +27,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --crm-primary: #8bc269;
+      --crm-primary: #68ae5c;
       --crm-accent: #89cdc4;
-      --crm-secondary: #68ae5c;
-      --crm-charcoal: #242424;
-      --crm-soft: #dddddd;
+      --crm-secondary: #4f8d46;
+      --crm-charcoal: #1f1f1f;
+      --crm-soft: #e0e0e0;
     }
 
     body {
       font-family: 'Inter', sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(137, 205, 196, 0.22), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(139, 194, 105, 0.18), transparent 30%),
-        linear-gradient(180deg, #f7f7f7 0%, #efefef 54%, #e7e7e7 100%);
+        radial-gradient(circle at top left, rgba(137, 205, 196, 0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(104, 174, 92, 0.14), transparent 30%),
+        linear-gradient(180deg, #f8f8f8 0%, #efefef 54%, #e7e7e7 100%);
       color: var(--crm-charcoal);
     }
 
@@ -55,10 +55,37 @@
     }
 
     .pipeline-sidebar {
-      background: linear-gradient(180deg, rgba(36, 36, 36, 0.98), rgba(104, 174, 92, 0.95));
+      background:
+        radial-gradient(circle at top left, rgba(137, 205, 196, 0.2), transparent 28%),
+        linear-gradient(180deg, rgba(31, 31, 31, 0.99), rgba(31, 31, 31, 0.92) 35%, rgba(79, 141, 70, 0.96));
       color: white;
       border-right: 1px solid rgba(221, 221, 221, 0.22);
-      box-shadow: 0 28px 60px -34px rgba(36, 36, 36, 0.42);
+      box-shadow: 0 28px 60px -34px rgba(31, 31, 31, 0.48);
+    }
+
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-mark {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, rgba(104, 174, 92, 0.24), rgba(137, 205, 196, 0.22));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 14px 30px -20px rgba(0, 0, 0, 0.5);
+      flex: 0 0 auto;
+    }
+
+    .brand-mark svg {
+      width: 1.65rem;
+      height: 1.65rem;
+      color: white;
     }
 
     .pipeline-link {
@@ -177,9 +204,19 @@
     <aside class="pipeline-sidebar p-6 lg:p-7">
       <div class="flex h-full flex-col gap-8">
         <div>
-          <p class="text-[11px] font-black uppercase tracking-[0.32em] text-white/72">CRM de Leads</p>
-          <h1 class="mt-3 text-3xl font-black text-white">Pipeline Comercial</h1>
-          <p class="mt-3 max-w-xs text-sm leading-6 text-white/82">Ambiente dedicado para captacao, qualificacao e acompanhamento dos leads do CRM.</p>
+          <div class="brand-lockup">
+            <div class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 19V5l7 4 7-4v14l-7-4-7 4Z" />
+                <path d="M12 9.5v10" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-[11px] font-black uppercase tracking-[0.32em] text-white/72">Força Engenharia</p>
+              <h1 class="mt-1 text-3xl font-black text-white">CRM Comercial</h1>
+            </div>
+          </div>
+          <p class="mt-4 max-w-xs text-sm leading-6 text-white/82">Ambiente dedicado para captação, qualificação e acompanhamento dos leads, com a mesma linguagem visual da landing page.</p>
         </div>
 
         <nav class="grid gap-3">
@@ -216,11 +253,22 @@
 
     <div class="min-w-0">
       <header class="px-4 pt-4 md:px-6 md:pt-6 lg:px-8">
-        <div class="page-intro rounded-[2rem] border border-white/70 bg-white/88 px-6 py-5 shadow-[0_24px_70px_-50px_rgba(36,36,36,0.35)] backdrop-blur">
-          <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p class="text-[11px] font-black uppercase tracking-[0.28em] text-secondary">Modulo ativo</p>
-              <h2 class="mt-2 text-2xl font-black text-charcoal">{% block header_title %}CRM Pipeline{% endblock %}</h2>
+        <div class="page-intro rounded-[2rem] border border-white/70 bg-white/88 px-6 py-5 shadow-[0_24px_70px_-50px_rgba(31,31,31,0.35)] backdrop-blur">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex items-center gap-4">
+              <div class="brand-mark text-charcoal" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 19V5l7 4 7-4v14l-7-4-7 4Z" />
+                  <path d="M12 9.5v10" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-[11px] font-black uppercase tracking-[0.28em] text-secondary">Modulo ativo</p>
+                <h2 class="mt-2 text-2xl font-black text-charcoal">{% block header_title %}CRM Pipeline{% endblock %}</h2>
+              </div>
+            </div>
+            <div class="hidden rounded-full border border-primary/25 bg-[rgba(104,174,92,0.08)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-secondary md:inline-flex">
+              Identidade alinhada com a landing
             </div>
           </div>
         </div>
