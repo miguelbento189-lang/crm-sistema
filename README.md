@@ -77,4 +77,46 @@ Fluxo sugerido:
 4. publique a branch `main`
 5. rode as migracoes antes de validar o endpoint publico
 
+## Deploy no Vercel (gratuito)
+
+1. Entre no painel da Vercel e clique em Add New > Project.
+2. Importe o repositorio do CRM: miguelbento189-lang/crm-sistema.
+3. Em Build and Output Settings, mantenha as configuracoes do repositorio (o arquivo vercel.json ja esta preparado).
+4. Em Environment Variables, configure no ambiente Production:
+	- DJANGO_SETTINGS_MODULE=core.settings
+	- DEBUG=False
+	- SECRET_KEY=(valor forte)
+	- USE_SQLITE=False
+	- DATABASE_URL=(Postgres gerenciado)
+	- ALLOWED_HOSTS=crm.forcaeng.com.br
+	- CSRF_TRUSTED_ORIGINS=https://crm.forcaeng.com.br
+	- VERCEL_URL=(deixe vazio; a Vercel injeta automaticamente)
+	- USE_X_FORWARDED_HOST=True
+	- SECURE_SSL_REDIRECT=True
+	- SESSION_COOKIE_SECURE=True
+	- CSRF_COOKIE_SECURE=True
+	- DISABLE_STATIC_MANIFEST=True
+5. Clique em Deploy.
+
+### Dominio crm.forcaeng.com.br
+
+1. No projeto da Vercel, abra Settings > Domains.
+2. Adicione crm.forcaeng.com.br.
+3. A Vercel vai pedir um registro DNS tipo CNAME.
+4. No DNS (Hostinger), remova o A record atual de crm (45.132.157.183) e crie:
+	- Tipo: CNAME
+	- Host: crm
+	- Valor: cname.vercel-dns.com
+5. Aguarde propagacao e valide a raiz:
+	- https://crm.forcaeng.com.br/
+
+### Validacao da integracao com landing
+
+Depois do dominio ativo no Vercel, valide:
+
+1. Endpoint publico:
+	- https://crm.forcaeng.com.br/sistema/crm/api/public/leads/
+2. Envio real pelo formulario da landing.
+3. Entrada do lead no pipeline do CRM com origem/campanha/utm.
+
 Para validar localmente antes do deploy, rode `python manage.py check` e `python manage.py collectstatic --noinput`.
