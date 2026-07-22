@@ -89,8 +89,10 @@ if not DEBUG and SECRET_KEY.startswith('troque-esta-chave'):
 
 ALLOWED_HOSTS = csv_env(
     'ALLOWED_HOSTS',
-    default='localhost,127.0.0.1'
+    default='localhost,127.0.0.1,crm.forcaeng.com.br'
 )
+if 'crm.forcaeng.com.br' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('crm.forcaeng.com.br')
 if env_bool('ALLOW_ALL_HOSTS', default=False):
     if DEBUG:
         ALLOWED_HOSTS = ['*']
@@ -104,6 +106,8 @@ if RENDER_EXTERNAL_HOSTNAME:
     render_origin = f'https://{RENDER_EXTERNAL_HOSTNAME}'
     if render_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(render_origin)
+if 'https://crm.forcaeng.com.br' not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append('https://crm.forcaeng.com.br')
 VERCEL_URL = env_str('VERCEL_URL', default='').strip()
 if VERCEL_URL:
     if VERCEL_URL not in ALLOWED_HOSTS:
