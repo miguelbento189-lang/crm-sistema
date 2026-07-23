@@ -85,13 +85,21 @@ def map_service_choice(raw_service):
     service = (raw_service or '').strip().lower()
     service_map = {
         'spda': 'spda',
+        'laudo de spda': 'spda',
         'eletrico': 'eletrico',
+        'elétrico': 'eletrico',
+        'laudo de instalacoes eletricas': 'eletrico',
+        'laudo de instalações elétricas': 'eletrico',
         'ambos': 'ambos',
+        'spda e instalacoes eletricas': 'ambos',
+        'spda e instalações elétricas': 'ambos',
         'orcamento': 'orcamento',
+        'orçamento': 'orcamento',
+        'solicitar orçamento': 'orcamento',
         'solar': 'solar',
         'climatizacao': 'climatizacao',
     }
-    return service_map.get(service, 'spda')
+    return service_map.get(service, 'solar')
 
 
 def create_lead_from_payload(payload, *, actor='site'):
@@ -99,6 +107,8 @@ def create_lead_from_payload(payload, *, actor='site'):
 
     contact_name = (payload.get('full_name') or payload.get('name') or '').strip()
     company = (payload.get('company') or '').strip()
+    lead_source = (payload.get('lead_source') or '').strip()
+    raw_service = (payload.get('interest_service') or payload.get('service') or payload.get('servico') or '').strip()
     email = (payload.get('email') or '').strip()
     documento = (payload.get('documento') or '').strip()
     cep = (payload.get('cep') or '').strip()
@@ -124,6 +134,8 @@ def create_lead_from_payload(payload, *, actor='site'):
 
     lead = Lead.objects.create(
         nome_razao=nome_razao,
+        nome_contato=contact_name,
+        empresa=company,
         whatsapp=(payload.get('whatsapp') or '').strip(),
         email=email,
         documento=documento,
@@ -133,7 +145,8 @@ def create_lead_from_payload(payload, *, actor='site'):
         bairro=bairro,
         cidade=cidade,
         estado=estado,
-        servico=map_service_choice(payload.get('interest_service') or payload.get('servico')),
+        servico=map_service_choice(raw_service),
+        servico_interesse=raw_service,
         origem=origem,
         page_url=(payload.get('page_url') or '').strip(),
         referrer=(payload.get('referrer') or '').strip(),
@@ -142,6 +155,7 @@ def create_lead_from_payload(payload, *, actor='site'):
         utm_campaign=(payload.get('utm_campaign') or '').strip(),
         utm_term=(payload.get('utm_term') or '').strip(),
         utm_content=(payload.get('utm_content') or '').strip(),
+        lead_source=lead_source,
         valor=parse_money_br(payload.get('valor')),
         observacoes=build_lead_observations(
             contact_name=contact_name,
@@ -403,10 +417,7 @@ def cadastrar_lead_view(request):
     if request.method == 'POST':
         data = request.POST
         nome_razao = (data.get('nome') or data.get('nome_razao') or '').strip()
-        allowed_services = {choice[0] for choice in Lead.SERVICO_CHOICES}
-        servico = (data.get('servico') or Lead.SERVICO_CHOICES[0][0]).strip()
-        if servico not in allowed_services:
-            servico = Lead.SERVICO_CHOICES[0][0]
+        servico = map_service_choice(data.get('servico') or 'solar')
 
         if not nome_razao:
             messages.error(request, 'Informe o nome ou razão social do lead.')
@@ -414,6 +425,8 @@ def cadastrar_lead_view(request):
 
         lead = Lead.objects.create(
             nome_razao=nome_razao,
+            nome_contato=(data.get('nome_contato') or '').strip(),
+            empresa=(data.get('empresa') or '').strip(),
             whatsapp=(data.get('whatsapp') or '').strip(),
             email=(data.get('email') or '').strip(),
             documento=(data.get('documento') or '').strip(),
@@ -432,6 +445,8 @@ def cadastrar_lead_view(request):
             utm_campaign=(data.get('utm_campaign') or '').strip(),
             utm_term=(data.get('utm_term') or '').strip(),
             utm_content=(data.get('utm_content') or '').strip(),
+            lead_source=(data.get('lead_source') or '').strip(),
+            servico_interesse=(data.get('servico_interesse') or data.get('service') or '').strip(),
             valor=parse_money_br(data.get('valor')),
             observacoes=(data.get('descricao') or '').strip(),
             estagio=PipelineStage.first_stage_key(),

@@ -858,6 +858,12 @@
                                         </span>
                                         {% endif %}
 
+                                        {% if lead.lead_source %}
+                                        <span class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-soft/60 text-charcoal/70 max-w-full truncate" title="{{ lead.lead_source }}">
+                                            {{ lead.lead_source }}
+                                        </span>
+                                        {% endif %}
+
                                     </div>
 
 

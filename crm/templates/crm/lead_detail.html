@@ -160,10 +160,34 @@
             <div class="panel-surface p-6">
                 <h4 class="font-bold text-charcoal mb-4 text-[10px] uppercase tracking-widest border-b border-soft pb-2">Resumo rápido</h4>
                 <div class="grid gap-3">
+                    {% if lead.nome_contato %}
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Contato da landing</p>
+                        <p class="mt-1 text-sm font-bold text-charcoal">{{ lead.nome_contato }}</p>
+                    </div>
+                    {% endif %}
+                    {% if lead.empresa %}
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Empresa da landing</p>
+                        <p class="mt-1 text-sm font-bold text-charcoal">{{ lead.empresa }}</p>
+                    </div>
+                    {% endif %}
                     <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
                         <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Origem</p>
                         <p class="mt-1 text-sm font-bold text-charcoal">{{ lead.get_origem_display|default:lead.origem|default:"Não informada" }}</p>
                     </div>
+                    {% if lead.lead_source %}
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Fonte técnica</p>
+                        <p class="mt-1 text-sm font-bold text-charcoal">{{ lead.lead_source }}</p>
+                    </div>
+                    {% endif %}
+                    {% if lead.servico_interesse %}
+                    <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Serviço informado</p>
+                        <p class="mt-1 text-sm font-bold text-charcoal">{{ lead.servico_interesse }}</p>
+                    </div>
+                    {% endif %}
                     {% if lead.documento %}
                     <div class="rounded-2xl border border-soft bg-soft/28 px-4 py-3">
                         <p class="text-[10px] font-black uppercase tracking-[0.18em] text-charcoal/45">Documento</p>

@@ -82,6 +82,8 @@ class Lead(models.Model):
     ]
 
     nome_razao = models.CharField(max_length=255, verbose_name='Nome/Razao Social')
+    nome_contato = models.CharField(max_length=255, blank=True)
+    empresa = models.CharField(max_length=255, blank=True)
     whatsapp = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
     documento = models.CharField(max_length=20, blank=True)
@@ -100,6 +102,8 @@ class Lead(models.Model):
     utm_campaign = models.CharField(max_length=160, blank=True)
     utm_term = models.CharField(max_length=160, blank=True)
     utm_content = models.CharField(max_length=160, blank=True)
+    lead_source = models.CharField(max_length=120, blank=True)
+    servico_interesse = models.CharField(max_length=80, blank=True)
     valor = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     estagio = models.CharField(max_length=50, default='contactar', db_index=True)
     observacoes = models.TextField(blank=True)
